@@ -9,7 +9,7 @@ function love.load()
 end
 
 function love.update(dt)
-	control:movecheck(dt)
+	control:moveCheck(dt)
 end
 
 function love.draw()
@@ -17,5 +17,5 @@ function love.draw()
 end
 
 function love.mousepressed(x, y, button)
-	control:onclick(x, y, button)
+	control:onClick(x, y, button)
 end
