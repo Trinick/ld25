@@ -1,2 +1,4 @@
 *.love
 dist
+*.exe
+*.bat
