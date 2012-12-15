@@ -11,6 +11,8 @@ function Entity.new(x, y, width, height)
     inst.width = width
     inst.height = height
 
+    inst.movespeed = 5
+
     return inst
 end
 
@@ -19,9 +21,8 @@ function Entity:render()
     love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
 end
 
-function Entity:collisionCheck(clickx, clicky)
-	myx = self.x
-	if clickx > myx[[self.x and x < self.x+self.width and y > self.y and y < self.y+self.height]] then
+function Entity:collisionCheck(x, y)
+	if x > self.x and x < self.x+self.width and y > self.y and y < self.y+self.height then
 		return 1
 	end
 	return 0
