@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ---
 --- audio.lua - AudioCtl object
 ---
@@ -10,6 +11,8 @@
 ---
 ---     Music coming soon. 
 
+=======
+>>>>>>> origin/master
 AudioCtl = {}
 AudioCtl.__index = AudioCtl
 
@@ -18,13 +21,20 @@ function AudioCtl.new()
     local inst = {}
 
     setmetatable(inst, AudioCtl)
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
     inst.globalvolume = 1.0
     inst.sfxvolumes = {}
     inst.sfx = {}
     inst:loadAllSFX()
 
+<<<<<<< HEAD
     --TODO Music
+=======
+    --TODO EVERYTHING
+>>>>>>> origin/master
 
     return inst
 end
@@ -61,8 +71,12 @@ function AudioCtl:playSound(name)
     love.audio.play(sound)
 end
 
+<<<<<<< HEAD
 --- Loops the song SONG. Stops any currently playing song. Does nothing if
 --- SONG does not actually exist.
+=======
+--- Loops the song SONG. Stops any currently playing song.
+>>>>>>> origin/master
 function AudioCtl:playSong(song)
 
 end
