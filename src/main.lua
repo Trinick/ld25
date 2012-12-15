@@ -9,11 +9,7 @@ function love.load()
 end
 
 function love.update(dt)
-<<<<<<< HEAD
     control:moveCheck(dt)
-=======
-	control:moveCheck(dt)
->>>>>>> 25a1ec737721afbaf2adfc57712f4f34e8323af6
 end
 
 function love.draw()
@@ -21,9 +17,5 @@ function love.draw()
 end
 
 function love.mousepressed(x, y, button)
-<<<<<<< HEAD
     control:onClick(x, y, button)
-=======
-	control:onClick(x, y, button)
->>>>>>> 25a1ec737721afbaf2adfc57712f4f34e8323af6
 end

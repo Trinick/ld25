@@ -22,17 +22,15 @@ function Entity:render()
 end
 
 function Entity:collisionCheck(x, y)
-<<<<<<< HEAD
     if x > self.x and x < self.x+self.width and y > self.y and y < self.y+self.height then
         return 1
     end
     return 0
-=======
+
 	if x > self.x and x < self.x+self.width and y > self.y and y < self.y+self.height then
 		return 1
 	end
 	return 0
->>>>>>> 25a1ec737721afbaf2adfc57712f4f34e8323af6
 end
 
 return Entity
