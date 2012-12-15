@@ -1,5 +1,6 @@
 Entity = require "entity"
 Friendly = require "friendly"
+Enemy = require "enemy"
 
 World = {}
 World.__index = World
