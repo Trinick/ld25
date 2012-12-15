@@ -4,23 +4,15 @@ Control.__index = Control
 function Control.new(world)
     local inst = {}
 
-<<<<<<< HEAD
-    setmetatable(inst, Control)
-
-    inst.world = world;
-    inst.currControl = {}
-=======
 	setmetatable(inst, Control)
 
 	inst.world = world;
 	inst.currControl = {}
->>>>>>> 25a1ec737721afbaf2adfc57712f4f34e8323af6
 
     return inst
 end
 
 function Control:moveCheck(dt)
-<<<<<<< HEAD
     for i, entity in pairs(self.currControl) do
         if entity ~= 0 then
             ns = 0
@@ -52,7 +44,6 @@ function Control:onClick(x, y, button)
             end
         end
     end
-=======
 	for i, entity in pairs(self.currControl) do
 		if entity ~= 0 then
 			ns = 0
@@ -84,7 +75,6 @@ function Control:onClick(x, y, button)
 			end
 		end
 	end
->>>>>>> 25a1ec737721afbaf2adfc57712f4f34e8323af6
 end
 
 return Control
