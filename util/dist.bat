@@ -2,5 +2,8 @@ mkdir ../dist
 cd ../src
 7za a -tzip ..\dist\ld25.love *
 cd ..
-copy /b love.exe+dist\ld25.love dist\ld25.exe
+cd windows
+copy /b love.exe+..\dist\ld25.love ..\dist\ld25.exe
+copy /b *.dll ..\dist\
+cd ..
 dist\ld25.exe
