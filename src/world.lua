@@ -15,6 +15,9 @@ function World.new(seed)
     inst.entities = {inst.player}
     inst.renderString = ""
 
+    inst.worldx = 0
+    inst.worldy = 0
+
     local lcg = LCG.new(seed)
     local player = Friendly.new(300, 300, 32, 32)
     local entities = {player}
@@ -228,6 +231,7 @@ function World.new(seed)
 end
 
 function World:render()
+    love.graphics.translate(self.worldx, self.worldy)
     love.graphics.setColor(255, 255, 255)
     love.graphics.draw(self.tilesBatch)
 

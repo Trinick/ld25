@@ -9,68 +9,59 @@ function Control.new(world)
 	inst.world = world;
 	inst.currControl = {}
 
+    inst.worldx = 0
+    inst.worldy = 0
+
     return inst
 end
 
 function Control:moveCheck(dt)
     for i, entity in pairs(self.currControl) do
-        if entity.class == 0x01 then
-            ns = 0
-            ew = 0
+        if entity ~= 0 then if entity.class == 0x01 then
+            ens = 0
+            eew = 0
 
             if love.keyboard.isDown("w") then
-                ns = entity.moveSpeed * -dt;
+                ens = entity.moveSpeed * -dt;
             end
             if love.keyboard.isDown("d") then
-                ew = entity.moveSpeed * dt;
+                eew = entity.moveSpeed * dt;
             end
             if love.keyboard.isDown("s") then
-                ns = entity.moveSpeed * dt;
+                ens = entity.moveSpeed * dt;
             end
             if love.keyboard.isDown("a") then
-                ew = entity.moveSpeed * -dt;
+                eew = entity.moveSpeed * -dt;
             end
 
-            entity.x = entity.x + ew;
-            entity.y = entity.y + ns;
+            entity.x = entity.x + eew;
+            entity.y = entity.y + ens;
+        end
         end
     end
+
+    wns = 0
+    wew = 0
+
+    if(love.keyboard.isDown("up")) then
+        wns = 256 * dt;
+    end
+    if(love.keyboard.isDown("right")) then
+        wew = 256 * -dt;
+    end
+    if(love.keyboard.isDown("down")) then
+         wns = 256 * -dt;
+    end
+    if(love.keyboard.isDown("left")) then
+        wew = 256 * dt;
+    end
+    self.world.worldx = self.world.worldx + wew
+    self.world.worldy = self.world.worldy + wns
 end
 
 function Control:onClick(x, y, button)
-    if button == "l" then
-        self.currControl[1] = 0
-        for i, entity in pairs(self.world.entities) do
-            if entity:collisionCheck(x, y) == 1 then
-                self.currControl[1] = entity
-            end
-        end
-    end
-	for i, entity in pairs(self.currControl) do
-		if entity ~= 0 then
-			ns = 0
-			ew = 0
-
-			if love.keyboard.isDown("w") then
-				ns = entity.moveSpeed * dt * -1;
-			end
-			if love.keyboard.isDown("d") then
-				ew = entity.moveSpeed * dt;
-			end
-			if love.keyboard.isDown("s") then
-				ns = entity.moveSpeed * dt;
-			end
-			if love.keyboard.isDown("a") then
-				ew = entity.moveSpeed * dt * -1;
-			end
-
-			entity.x = entity.x + ew;
-			entity.y = entity.y + ns;
-		end
-	end
-end
-
-function Control:onClick(x, y, button)
+    x = x - self.world.worldx
+    y = y - self.world.worldy
 	if button == "l" then
 		self.currControl[1] = 0
 
