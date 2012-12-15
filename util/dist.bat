@@ -1,6 +1,6 @@
 mkdir ..\dist
 cd ..\src
-..\deps\7za a -tzip ..\dist\ld25.love * ..\art
+..\deps\7za a -tzip ..\dist\ld25.love * ..\art ..\sound
 cd ..
 cd deps
 copy /b love.exe+..\dist\ld25.love ..\dist\ld25.exe
