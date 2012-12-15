@@ -1,3 +1,15 @@
+---
+--- audio.lua - AudioCtl object
+---
+--- Usage:
+---     Give the World object an "audio" field set to an AudioCtl.new().
+---     Whenever you need to play a sound effect from e.g. an entity,
+---     call something like self.world.audio:playSound("skeleton_hit") .
+---     If SOUNDNAME does not exist it will just play a placeholder pop
+---     sound effect.
+---
+---     Music coming soon. 
+
 AudioCtl = {}
 AudioCtl.__index = AudioCtl
 
@@ -6,12 +18,13 @@ function AudioCtl.new()
     local inst = {}
 
     setmetatable(inst, AudioCtl)
+
     inst.globalvolume = 1.0
     inst.sfxvolumes = {}
     inst.sfx = {}
     inst:loadAllSFX()
 
-    --TODO EVERYTHING
+    --TODO Music
 
     return inst
 end
@@ -48,7 +61,8 @@ function AudioCtl:playSound(name)
     love.audio.play(sound)
 end
 
---- Loops the song SONG. Stops any currently playing song.
+--- Loops the song SONG. Stops any currently playing song. Does nothing if
+--- SONG does not actually exist.
 function AudioCtl:playSong(song)
 
 end
