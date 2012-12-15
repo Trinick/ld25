@@ -19,4 +19,10 @@ function Entity:render()
     love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
 end
 
+function Entity:collisionCheck(x, y)
+	if(x > self.x && x < self.x+self.width && y > self.y && y < self.y+self.height)
+		return 1
+	return 0
+end
+
 return Entity

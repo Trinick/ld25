@@ -40,3 +40,5 @@ function Control:onclick(x, y, button)
 		end
 	end
 end
+
+return Control
