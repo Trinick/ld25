@@ -2,10 +2,10 @@ World = require "world"
 control = require "control"
 
 function love.load()
-    love.graphics.setBackgroundColor(255, 255, 255)
+    love.graphics.setBackgroundColor(89, 29, 71)
 
-    world = World.new()
-    control = Control.new(world);
+    world = World.new(1337)
+    control = Control.new(world)
 end
 
 function love.update(dt)

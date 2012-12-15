@@ -18,7 +18,7 @@ function Entity.new(x, y, width, height, world)
 end
 
 function Entity:render()
-    love.graphics.setColor(0, 0, 0)
+    love.graphics.setColor(255, 0, 0)
     love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
 end
 
