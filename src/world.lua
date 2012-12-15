@@ -22,7 +22,7 @@ function World.new(seed)
     local height = 100
     local tiles = {}
 
-    for x = 1, width, 1 do
+    for x = 1, width do
         for y = 1, height, 1 do
             tiles[x .. "_" .. y] = false
         end
@@ -34,13 +34,14 @@ function World.new(seed)
     inst.tiles = tiles
     inst.width = width
     inst.height = height
+    inst.tiles = tiles
 
     local rooms = {}
     local count = 8 + math.floor(lcg:random() * (width + height) / 2)
     local spawnX, spawnY
 
     for j = 1, 2, 1 do
-        for i = 0, count, 1 do
+        for i = 0, count do
             if j == 1 then
                 local x, y, radius, size
 
@@ -61,8 +62,8 @@ function World.new(seed)
                 local kx = x - radius
                 local ky = y - radius
 
-                for k = 0, size, 1 do
-                    for l = 0, size, 1 do
+                for k = 0, size do
+                    for l = 0, size do
                         inst:setTile(kx + k, ky + l, true)
                     end
                 end
@@ -144,10 +145,92 @@ function World.new(seed)
         end
     end
 
+    function tile(x, y)
+        return love.graphics.newQuad(x * 32, y * 32, 32, 32, tileset:getWidth(), tileset:getHeight())
+    end
+
+    local tilesetQuads = {
+        roofTop = tile(5, 0),
+        roofTopLeft = tile(4, 0),
+        roofTopRight = tile(6, 0),
+        roofTopLeftInverted = tile(6, 5),
+        roofTopRightInverted = tile(4, 5),
+        roofLeft = tile(4, 1),
+        roofRight = tile(6, 1),
+        roofBottom = tile(5, 3),
+        roofBottomLeft = tile(4, 3),
+        roofBottomRight = tile(6, 3),
+        roofBottomLeftInverted = tile(6, 4),
+        roofBottomRightInverted = tile(4, 4),
+        wallTop = tile(5, 1),
+        floor = tile(0, 1)
+    }
+    local tilesBatch = love.graphics.newSpriteBatch(tileset, width * height)
+
+    for x = 0, width do
+        for y = 0, height do
+            local curr = not inst:getTile(x, y)
+            local north = not inst:getTile(x, y - 1)
+            local northEast = not inst:getTile(x + 1, y - 1)
+            local northWest = not inst:getTile(x - 1, y - 1)
+            local south = not inst:getTile(x, y + 1)
+            local southEast = not inst:getTile(x + 1, y + 1)
+            local southEastSouth = not inst:getTile(x + 1, y + 2)
+            local southWest = not inst:getTile(x - 1, y + 1)
+            local southWestSouth = not inst:getTile(x - 1, y + 2)
+            local southSouth = not inst:getTile(x, y + 2)
+            local east = not inst:getTile(x + 1, y)
+            local eastEast = not inst:getTile(x + 2, y)
+            local west = not inst:getTile(x - 1, y)
+            local westWest = not inst:getTile(x - 2, y)
+
+            -- This logic is definitely broken in some places, so fix it where necessary.
+
+            if not curr then
+                tilesBatch:addq(tilesetQuads.floor, x * 32, y * 32)
+            elseif north and south and west and not east and not southSouth then
+                tilesBatch:addq(tilesetQuads.roofBottomLeftInverted, x * 32, y * 32)
+            elseif north and south and east and not west and not southSouth then
+                tilesBatch:addq(tilesetQuads.roofBottomLeftInverted, x * 32, y * 32)
+            elseif north and south and west and not east then
+                tilesBatch:addq(tilesetQuads.roofLeft, x * 32, y * 32)
+            elseif north and south and east and not west then
+                tilesBatch:addq(tilesetQuads.roofRight, x * 32, y * 32)
+            elseif north and east and not northEast then
+                tilesBatch:addq(tilesetQuads.roofBottomLeft, x * 32, y * 32)
+            elseif north and west and not northWest then
+                tilesBatch:addq(tilesetQuads.roofBottomRight, x * 32, y * 32)
+            elseif south and not north and not west then
+                tilesBatch:addq(tilesetQuads.roofTopLeftInverted, x * 32, y * 32)
+            elseif south and not north and not east then
+                tilesBatch:addq(tilesetQuads.roofTopRightInverted, x * 32, y * 32)
+            elseif south and not north then
+                tilesBatch:addq(tilesetQuads.roofBottom, x * 32, y * 32)
+            elseif (east or not eastEast) and (west or not westWest) and not south then
+                tilesBatch:addq(tilesetQuads.wallTop, x * 32, y * 32)
+            elseif east and west and south and not southSouth then
+                tilesBatch:addq(tilesetQuads.roofTop, x * 32, y * 32)
+            elseif west and south and not southEast then
+                tilesBatch:addq(tilesetQuads.roofLeft, x * 32, y * 32)
+            elseif east and south and southEast and not southEastSouth then
+                tilesBatch:addq(tilesetQuads.roofTopLeft, x * 32, y * 32)
+            elseif east and south and not southWest then
+                tilesBatch:addq(tilesetQuads.roofRight, x * 32, y * 32)
+            elseif west and south and southWest and not southWestSouth then
+                tilesBatch:addq(tilesetQuads.roofTopRight, x * 32, y * 32)
+            end
+        end
+    end
+
+    inst.tilesBatch = tilesBatch
+
     return inst
 end
 
 function World:render()
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.draw(self.tilesBatch)
+
     for i, entity in pairs(self.entities) do
         entity:render(x, y)
     end
@@ -158,7 +241,7 @@ function World:render()
 end
 
 function World:setTile(x, y, bit)
-    self.tiles[x .. "_" .. y]= bit
+    self.tiles[x .. "_" .. y] = bit
 end
 
 function World:getTile(x, y)

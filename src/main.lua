@@ -4,7 +4,10 @@ control = require "control"
 function love.load()
     love.graphics.setBackgroundColor(89, 29, 71)
 
-    world = World.new(1337)
+    tileset = love.graphics.newImage("art/tiles.png")
+    tileset:setFilter("nearest", "linear")
+
+    world = World.new(1)
     control = Control.new(world)
 end
 
