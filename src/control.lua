@@ -4,7 +4,7 @@ Control.__index = Control
 function Control.new(world)
 	local inst = {}
 
-	setmetatable(inst, World)
+	setmetatable(inst, Control)
 
 	inst.world = world;
 	inst.currcontrol = {}
@@ -12,7 +12,7 @@ function Control.new(world)
 	return inst
 end
 
-function Control:check(dt)
+function Control:movecheck(dt)
 	for i, entity in pairs(self.currcontrol) do
 		if love.keyboard.isDown(w) then
 			ns = entity.movespeed * dt;
@@ -26,16 +26,17 @@ function Control:check(dt)
 		if love.keyboard.isDown(a) then
 			ew = entity.movespeed * dt * -1;
 		end
-		entity.x += ns;
-		entity.y += ew;
+		entity.x = entity.y + ns;
+		entity.y = entity.y + ew;
 	end
 end
 
 function Control:onclick(x, y, button)
-	if button == 1 then
+	if button == "l" then
 		for i, entity in pairs(self.world.entities) do
-			if entity.collisionCheck(x, y) && entity.canControl then
-				this.currcontrol[1] = entity;
+			if entity.collisionCheck(x, y) and entity.canControl then
+				self.currcontrol[1] = entity
+				self.world.renderstring = entity
 			end
 		end
 	end

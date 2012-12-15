@@ -10,6 +10,7 @@ function World.new()
 
     inst.player = Entity.new(300, 300, 32, 32)
     inst.entities = {inst.player}
+    inst.renderstring = ""
 
     return inst
 end
@@ -17,6 +18,9 @@ end
 function World:render()
     for i, entity in pairs(self.entities) do
         entity:render()
+    end
+    if self.renderstring ~= "" then
+    	love.graphics.printf(self.renderstring, 0, 0, 800)
     end
 end
 
