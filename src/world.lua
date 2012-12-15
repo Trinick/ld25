@@ -1,4 +1,6 @@
 Entity = require "entity"
+Friendly = require "friendly"
+Enemy = require "enemy"
 
 World = {}
 World.__index = World
@@ -8,7 +10,7 @@ function World.new()
 
     setmetatable(inst, World)
 
-    inst.player = Entity.new(300, 300, 32, 32)
+    inst.player = Friendly.new(300, 300, 32, 32)
     inst.entities = {inst.player}
     inst.renderstring = ""
 
