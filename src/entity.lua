@@ -11,7 +11,7 @@ function Entity.new(x, y, width, height)
     inst.width = width
     inst.height = height
 
-    inst.movespeed = 5
+    inst.moveSpeed = 5
 
     return inst
 end
