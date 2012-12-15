@@ -41,7 +41,7 @@ end
 function Control:onclick(x, y, button)
 	if button == "l" then
 		for i, entity in pairs(self.world.entities) do
-			if entity:collisionCheck(x, y) == 1 then
+			if entity:collisionCheck(x, y) == 1 and entity.cancontrol then
 				self.currcontrol[1] = entity
 				self.world.renderstring = 1
 			end
