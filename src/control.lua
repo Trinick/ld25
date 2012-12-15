@@ -4,10 +4,10 @@ Control.__index = Control
 function Control.new(world)
     local inst = {}
 
-	setmetatable(inst, Control)
+    setmetatable(inst, Control)
 
-	inst.world = world;
-	inst.currControl = {}
+    inst.world = world;
+    inst.currControl = {}
 
     inst.worldx = 0
     inst.worldy = 0
@@ -22,20 +22,24 @@ function Control:moveCheck(dt)
             eew = 0
 
             if love.keyboard.isDown("w") then
-                ens = entity.moveSpeed * -dt;
+                ens = entity.moveSpeed * -dt
             end
             if love.keyboard.isDown("d") then
-                eew = entity.moveSpeed * dt;
+                eew = entity.moveSpeed * dt
             end
             if love.keyboard.isDown("s") then
-                ens = entity.moveSpeed * dt;
+                ens = entity.moveSpeed * dt
             end
             if love.keyboard.isDown("a") then
-                eew = entity.moveSpeed * -dt;
+                eew = entity.moveSpeed * -dt
             end
 
-            entity.x = entity.x + eew;
-            entity.y = entity.y + ens;
+            entity.x = entity.x + eew
+            entity.y = entity.y + ens
+
+            if entity.collision ~= nil then
+                entity.collision:move(eew, ens)
+            end
         end
         end
     end
@@ -44,16 +48,16 @@ function Control:moveCheck(dt)
     wew = 0
 
     if(love.keyboard.isDown("up")) then
-        wns = 256 * dt;
+        wns = 256 * dt
     end
     if(love.keyboard.isDown("right")) then
-        wew = 256 * -dt;
+        wew = 256 * -dt
     end
     if(love.keyboard.isDown("down")) then
-         wns = 256 * -dt;
+         wns = 256 * -dt
     end
     if(love.keyboard.isDown("left")) then
-        wew = 256 * dt;
+        wew = 256 * dt
     end
     self.world.worldx = self.world.worldx + wew
     self.world.worldy = self.world.worldy + wns
@@ -62,15 +66,15 @@ end
 function Control:onClick(x, y, button)
     x = x - self.world.worldx
     y = y - self.world.worldy
-	if button == "l" then
-		self.currControl[1] = 0
+    if button == "l" then
+        self.currControl[1] = 0
 
-		for i, entity in pairs(self.world.entities) do
-			if entity:collisionCheck(x, y) == 1 then
-				self.currControl[1] = entity
-			end
-		end
-	end
+        for i, entity in pairs(self.world.entities) do
+            if entity:collisionCheck(x, y) == 1 then
+                self.currControl[1] = entity
+            end
+        end
+    end
 end
 
 return Control

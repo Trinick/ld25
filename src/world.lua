@@ -11,8 +11,8 @@ function World.new(seed)
 
     setmetatable(inst, World)
 
-    inst.player = Friendly.new(300, 300, 32, 32)
-    inst.entities = {inst.player}
+--    inst.player = Friendly.new(300, 300, 32, 32)
+--    inst.entities = {inst.player}
     inst.renderString = ""
 
     inst.worldx = 0
@@ -152,6 +152,11 @@ function World.new(seed)
         return love.graphics.newQuad(x * 32, y * 32, 32, 32, tileset:getWidth(), tileset:getHeight())
     end
 
+    function tileCollision(x, y)
+        local box = Collider:addRectangle(x * 32, y * 32, 32, 32)
+        Collider:setPassive(box)
+    end
+
     local tilesetQuads = {
         roofTop = tile(5, 0),
         roofTopLeft = tile(4, 0),
@@ -191,36 +196,39 @@ function World.new(seed)
 
             if not curr then
                 tilesBatch:addq(tilesetQuads.floor, x * 32, y * 32)
-            elseif north and south and west and not east and not southSouth then
-                tilesBatch:addq(tilesetQuads.roofBottomLeftInverted, x * 32, y * 32)
-            elseif north and south and east and not west and not southSouth then
-                tilesBatch:addq(tilesetQuads.roofBottomLeftInverted, x * 32, y * 32)
-            elseif north and south and west and not east then
-                tilesBatch:addq(tilesetQuads.roofLeft, x * 32, y * 32)
-            elseif north and south and east and not west then
-                tilesBatch:addq(tilesetQuads.roofRight, x * 32, y * 32)
-            elseif north and east and not northEast then
-                tilesBatch:addq(tilesetQuads.roofBottomLeft, x * 32, y * 32)
-            elseif north and west and not northWest then
-                tilesBatch:addq(tilesetQuads.roofBottomRight, x * 32, y * 32)
-            elseif south and not north and not west then
-                tilesBatch:addq(tilesetQuads.roofTopLeftInverted, x * 32, y * 32)
-            elseif south and not north and not east then
-                tilesBatch:addq(tilesetQuads.roofTopRightInverted, x * 32, y * 32)
-            elseif south and not north then
-                tilesBatch:addq(tilesetQuads.roofBottom, x * 32, y * 32)
-            elseif (east or not eastEast) and (west or not westWest) and not south then
-                tilesBatch:addq(tilesetQuads.wallTop, x * 32, y * 32)
-            elseif east and west and south and not southSouth then
-                tilesBatch:addq(tilesetQuads.roofTop, x * 32, y * 32)
-            elseif west and south and not southEast then
-                tilesBatch:addq(tilesetQuads.roofLeft, x * 32, y * 32)
-            elseif east and south and southEast and not southEastSouth then
-                tilesBatch:addq(tilesetQuads.roofTopLeft, x * 32, y * 32)
-            elseif east and south and not southWest then
-                tilesBatch:addq(tilesetQuads.roofRight, x * 32, y * 32)
-            elseif west and south and southWest and not southWestSouth then
-                tilesBatch:addq(tilesetQuads.roofTopRight, x * 32, y * 32)
+            else
+                tileCollision(x, y)
+                if north and south and west and not east and not southSouth then
+                    tilesBatch:addq(tilesetQuads.roofBottomRightInverted, x * 32, y * 32)
+                elseif north and south and east and not west and not southSouth then
+                    tilesBatch:addq(tilesetQuads.roofBottomLeftInverted, x * 32, y * 32)
+                elseif north and south and west and not east then
+                    tilesBatch:addq(tilesetQuads.roofLeft, x * 32, y * 32)
+                elseif north and south and east and not west then
+                    tilesBatch:addq(tilesetQuads.roofRight, x * 32, y * 32)
+                elseif north and east and not northEast then
+                    tilesBatch:addq(tilesetQuads.roofBottomLeft, x * 32, y * 32)
+                elseif north and west and not northWest then
+                    tilesBatch:addq(tilesetQuads.roofBottomRight, x * 32, y * 32)
+                elseif south and not north and not west then
+                    tilesBatch:addq(tilesetQuads.roofTopLeftInverted, x * 32, y * 32)
+                elseif south and not north and not east then
+                    tilesBatch:addq(tilesetQuads.roofTopRightInverted, x * 32, y * 32)
+                elseif south and not north then
+                    tilesBatch:addq(tilesetQuads.roofBottom, x * 32, y * 32)
+                elseif (east or not eastEast) and (west or not westWest) and not south then
+                    tilesBatch:addq(tilesetQuads.wallTop, x * 32, y * 32)
+                elseif east and west and south and not southSouth then
+                    tilesBatch:addq(tilesetQuads.roofTop, x * 32, y * 32)
+                elseif west and south and not southEast then
+                    tilesBatch:addq(tilesetQuads.roofLeft, x * 32, y * 32)
+                elseif east and south and southEast and not southEastSouth then
+                    tilesBatch:addq(tilesetQuads.roofTopLeft, x * 32, y * 32)
+                elseif east and south and not southWest then
+                    tilesBatch:addq(tilesetQuads.roofRight, x * 32, y * 32)
+                elseif west and south and southWest and not southWestSouth then
+                    tilesBatch:addq(tilesetQuads.roofTopRight, x * 32, y * 32)
+                end
             end
         end
     end
@@ -240,7 +248,7 @@ function World:render()
     end
 
     if self.renderString ~= "" then
-    	love.graphics.printf(self.renderString, 0, 0, 800)
+        love.graphics.printf(self.renderString, 0, 0, 800)
     end
 end
 

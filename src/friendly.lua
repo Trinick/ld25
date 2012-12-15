@@ -22,6 +22,9 @@ function Friendly.new(x, y, width, height, world)
 
     inst.health = 100
 
+    inst.collision = Collider:addRectangle(x, y, width, height)
+    inst.collision.instance = inst
+
     return inst
 end
 
