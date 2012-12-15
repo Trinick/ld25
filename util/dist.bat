@@ -1,3 +1,4 @@
+mkdir dist
 cd src
 7za a -tzip ..\dist\ld25.love *
 cd ..
