@@ -15,7 +15,7 @@ function Friendly.new(x, y, width, height, world)
     inst.height = height
     inst.direction = 0
 
-    inst.moveSpeed = 8
+    inst.moveSpeed = 64
 
     inst.attackAngle = 0.218165
     inst.attackDist = 16

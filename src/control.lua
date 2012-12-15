@@ -14,7 +14,7 @@ end
 
 function Control:moveCheck(dt)
     for i, entity in pairs(self.currControl) do
-        if entity ~= 0 then
+        if entity.class == 0x01 then
             ns = 0
             ew = 0
 

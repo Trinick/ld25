@@ -16,7 +16,7 @@ function World.new(seed)
     inst.renderString = ""
 
     local lcg = LCG.new(seed)
-    local player = Entity.new(300, 300, 32, 32)
+    local player = Friendly.new(300, 300, 32, 32)
     local entities = {player}
     local width = 100
     local height = 100
