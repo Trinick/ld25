@@ -8,7 +8,7 @@ function Friendly.new(x, y, width, height)
 
     inst.className = "friendly"
     inst.class = 0x01
-    inst.entityClass = classMgr.classes[1]
+    inst.entityClass = classMgr.classes[2]
 
     inst.x = x
     inst.y = y
