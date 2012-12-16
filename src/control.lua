@@ -6,14 +6,15 @@ function Control.new()
 
     setmetatable(inst, Control)
 
-    inst.currControl = {}
+    inst.controlling = {}
+    inst.controllingIndex = 1
     inst.moving = false
 
     return inst
 end
 
 function Control:moveCheck(dt)
-    for i, entity in pairs(self.currControl) do
+    for i, entity in pairs(self.controlling) do
         if entity ~= 0 then if entity.class == 0x01 then
             ens = 0
             eew = 0
@@ -85,14 +86,22 @@ function Control:moveCheck(dt)
     world.cameraY = world.cameraY + wns
 end
 
+function Control:clear()
+    self.controlling = {}
+    self.controllingIndex = 1
+end
+
 function Control:update(dt)
     self:moveCheck(dt)
 
-    local target = self.currControl[1]
+    if #self.controlling > 0 and self.center then
+        local target = self.controlling[self.controllingIndex]
 
-    if target and self.center then
-        world.cameraX = -target.x - target.width / 2
-        world.cameraY = -target.y - target.height / 2
+        if target then
+            world.cameraX = -target.x - target.width / 2
+            world.cameraY = -target.y - target.height / 2
+            self.controllingIndex = ((self.controllingIndex + 1) % #self.controlling) + 1
+        end
     end
 end
 
@@ -101,11 +110,11 @@ function Control:onClick(x, y, button)
     y = y - world.cameraY - love.graphics.getHeight() / 2
 
     if button == "l" then
-        self.currControl[1] = 0
+        self.controlling = {}
 
         for i, entity in pairs(world.entities) do
             if entity:collisionCheck(x, y) == 1 then
-                self.currControl[1] = entity
+                table.insert(self.controlling, entity)
             end
         end
     end

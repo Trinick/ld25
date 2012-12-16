@@ -10,6 +10,8 @@ function GUI.new()
     inst.loaded = false
     inst.ready = false
     inst.skull = love.graphics.newImage("art/images/skull.png")
+    inst.status = love.graphics.newImage("art/images/status.png")
+    inst.map = love.graphics.newImage("art/images/map.png")
 
     return inst
 end
@@ -33,10 +35,21 @@ function GUI:renderLoading()
 end
 
 function GUI:renderHUD()
+    local width = love.graphics.getWidth()
+    local height = love.graphics.getHeight()
+    local target = control.controlling[control.controllingIndex]
 
+    if target then
+        local y = height - self.status:getHeight()
+
+        love.graphics.draw(self.status, 0, y)
+        love.graphics.setColor(255, 26, 26)
+        love.graphics.rectangle("fill", 78, y + 48, 184, 12)
+    end
 end
 
 function GUI:render()
+    love.graphics.push()
     love.graphics.setFont(font)
 
     if not self.loaded or not self.ready then
@@ -44,6 +57,8 @@ function GUI:render()
     else
         self:renderHUD()
     end
+
+    love.graphics.pop()
 end
 
 function GUI:update(dt)

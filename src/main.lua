@@ -45,6 +45,8 @@ end
 function love.keyreleased(button)
     if button == "lctrl" then
         control.center = false
+    elseif button == "escape" then
+        control:clear()
     end
 end
 

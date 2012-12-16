@@ -220,6 +220,7 @@ function World.new(seed)
 end
 
 function World:render()
+    love.graphics.push()
     love.graphics.translate(math.floor(self.cameraX + love.graphics.getWidth() / 2), math.floor(self.cameraY + love.graphics.getHeight() / 2))
     love.graphics.setColor(255, 255, 255)
     love.graphics.draw(self.tilesBatch)
@@ -231,6 +232,8 @@ function World:render()
     if self.renderString ~= "" then
         love.graphics.printf(self.renderString, 0, 0, 800)
     end
+
+    love.graphics.pop()
 end
 
 function World:setTile(x, y, bit)
