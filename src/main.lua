@@ -1,7 +1,7 @@
 World = require "world"
 Control = require "control"
 HC = require "collision"
-ClassMgr = require "classes"
+ClassMgrMeta = require "classes"
 
 function love.load()
     love.graphics.setBackgroundColor(89, 29, 71)
@@ -10,7 +10,7 @@ function love.load()
     tileset:setFilter("nearest", "linear")
 
     collider = HC(100, onCollision, onCollisionStop)
-    classMgr = ClassMgr.new()
+    classMgr = ClassMgrMeta.new()
     world = World.new(math.ceil(math.random() * 123456789))
     control = Control.new()
 end

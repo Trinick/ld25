@@ -40,9 +40,11 @@ function Control:moveCheck(dt)
                 eew = eew * root2div2
             end
 
-            entity.x = entity.x + eew
-            entity.y = entity.y + ens
-            entity.stepFrac = entity.stepfrac + (dt*4)
+            if ens ~= 0 or eew ~= 0 then
+                entity.x = entity.x + eew
+                entity.y = entity.y + ens
+                entity.stepFrac = entity.stepFrac + (dt*4)
+            end
 
             if entity.collision ~= nil then
                 entity.collision:move(eew, ens)
@@ -74,11 +76,12 @@ end
 function Control:onClick(x, y, button)
     x = x - world.cameraX
     y = y - world.cameraY
-
+    print(x .. " " .. y)
     if button == "l" then
         self.currControl[1] = 0
 
         for i, entity in pairs(world.entities) do
+            print(entity.x .. " " .. entity.y)
             if entity:collisionCheck(x, y) == 1 then
                 self.currControl[1] = entity
             end

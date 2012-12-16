@@ -51,10 +51,10 @@ function World.new(seed)
                 room = { x = x, y = y, size = size, radius = radius}
 
                 if i == 0 then
-                    inst.cameraX = x * 10
-                    inst.cameraY = y * 10
-                    inst.player = Friendly.new(x * 32, y * 32, 64, 64)
-
+                    inst.player = Friendly.new(x * -10, y*-10, 64, 64)
+                    inst.cameraX = x * -10
+                    inst.cameraY = y * -10
+                    print("Inserting into table")
                     table.insert(inst.entities, inst.player)
                 end
 
@@ -219,7 +219,7 @@ function World:render()
     love.graphics.draw(self.tilesBatch)
 
     for i, entity in pairs(self.entities) do
-        entity:render(x, y)
+        entity:render()
     end
 
     if self.renderString ~= "" then

@@ -8,7 +8,6 @@ function Entity.new(x, y, width, height, world)
 
     inst.class = "entity"
     inst.entityClass = classMgr.classes[1]
-
     inst.x = x
     inst.y = y
     inst.width = width
@@ -34,7 +33,9 @@ function Entity:render()
 
     local direction = self.direction
     local quad
-
+    if self.direction ~= 3 then
+        quad = dirs[direction + 1][self.step]
+    end
     if self.direction == 3 then
         direction = 2
         quad = dirs[direction + 1][self.step]
@@ -44,13 +45,10 @@ function Entity:render()
             self.flipped[self.step] = true
         end
     elseif self.direction == 2 and self.flipped[self.step] then
-        quad = dirs[direction + 1][self.step]
-
         self.flipped[self.step] = false
         quad:flip(true, false)
     end
-
-    love.graphics.drawq(class.tileset, dirs[direction + 1][self.step], self.x, self.y, 0, 2, 2, 0, 0)
+    love.graphics.drawq(class.tileset, quad, self.x, self.y, 0, 2, 2, 0, 0)
 end
 
 function Entity:collisionCheck(x, y)

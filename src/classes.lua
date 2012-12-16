@@ -29,6 +29,8 @@ function ClassMgr:initializeClass(class)
 
     table.insert(self.classes, inst)
 
+    print(#self.classes)
+
     local quad
 
     for y = 0, 2, 1 do

@@ -4,7 +4,7 @@ function love.conf(t)
     t.url = "http://github.com/centhra/ld25"
     t.identity = nil
     t.version = "0.8.0"
-    t.console = false
+    t.console = true
     t.release = false
     t.screen.width = 1024
     t.screen.height = 768

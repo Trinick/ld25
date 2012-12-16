@@ -1,13 +1,14 @@
 Friendly = {}
 Friendly.__index = Friendly
 
-function Friendly.new(x, y, width, height, world)
+function Friendly.new(x, y, width, height)
     local inst = {}
 
     setmetatable(inst, Entity)
 
     inst.className = "friendly"
     inst.class = 0x01
+    inst.entityClass = classMgr.classes[1]
 
     inst.x = x
     inst.y = y
