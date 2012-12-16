@@ -35,8 +35,9 @@ function Control:moveCheck(dt)
             end
 
             if ens ~= 0 and eew ~= 0 then
-                ens = ens / 2
-                eew = eew / 2
+                local root2div2 = math.sqrt(2) / 2
+                ens = ens * root2div2
+                eew = eew * root2div2
             end
 
             entity.x = entity.x + eew
