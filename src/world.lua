@@ -35,7 +35,6 @@ function World.new(seed)
     inst.tiles = tiles
     inst.width = width
     inst.height = height
-    inst.tiles = tiles
 
     local rooms = {}
     local count = 8 + math.floor(lcg:random() * (width + height) / 2)
@@ -156,12 +155,6 @@ function World.new(seed)
         return love.graphics.newQuad(x * 32, y * 32, 32, 32, tileset:getWidth(), tileset:getHeight())
     end
 
-    function tileCollision(x, y)
-        local box = collider:addRectangle(x * 32, y * 32, 32, 32)
-
-        collider:setPassive(box)
-    end
-
     local tilesetQuads = {
         wall = tile(4, 1),
         wallLeft = tile(4, 0),
@@ -171,6 +164,13 @@ function World.new(seed)
     }
     local tilesBatch = love.graphics.newSpriteBatch(tileset, width * height)
 
+    local walls = {}
+    function setWall(x, y)
+        walls[x .. "_" .. y] = true
+    end
+    function isWall(x, y)
+        return walls[x .. "_" .. y] == true
+    end
     for x = 0, width do
         for y = 0, height do
             local curr = not inst:getTile(x, y)
@@ -198,13 +198,12 @@ function World.new(seed)
                    (not south and not east and southEast) or
                    (not north and not west and northWest) or
                    (not south and not west and southWest) then
-                   table.insert(nodes, {x = x * 32, y = y * 32, neighbors = {}})
+                   table.insert(nodes, {x = x * 32 + 16, y = y * 32 + 16, neighbors = {}})
                 end
 
                 tilesBatch:addq(tilesetQuads.floor, x * 32, y * 32)
             else
-                tileCollision(x, y)
-
+                setWall(x, y)
                 if not south then
                     tilesBatch:addq(tilesetQuads.wall, x * 32, y * 32)
                 elseif (not north or not east or not south or not west) or
@@ -216,10 +215,127 @@ function World.new(seed)
         end
     end
 
-    gui.state = "Finalizing..."
-    gui.loaded = true
-    inst.tilesBatch = tilesBatch
+    -- Wall Rectangle Optimization --
+    local rectangles = {}
+    for x = 0, width do
+        local start_y
+        local end_y
 
+        for y = 0, height do
+            if isWall(x, y) then
+                if not start_y then
+                    start_y = y
+                end
+                end_y = y
+
+                if y == height then
+                    local overlaps = {}
+                    for _, r in ipairs(rectangles) do
+                        if (r.end_x == x - 1)
+                          and (start_y <= r.start_y)
+                          and (end_y >= r.end_y) then
+                            table.insert(overlaps, r)
+                        end
+                    end
+                    table.sort(
+                        overlaps,
+                        function (a, b)
+                            return a.start_y < b.start_y
+                        end
+                    )
+
+                    for _, r in ipairs(overlaps) do
+                        if start_y == r.start_y then
+                            r.end_x = r.end_x + 1
+
+                            if end_y == r.end_y then
+                                start_y = nil
+                                end_y = nil
+                            elseif end_y > r.end_y then
+                                start_y = r.end_y + 1
+                            end
+                        end
+                    end
+                end
+            elseif start_y then
+                local overlaps = {}
+                for _, r in ipairs(rectangles) do
+                    if (r.end_x == x - 1)
+                      and (start_y <= r.start_y)
+                      and (end_y >= r.end_y) then
+                        table.insert(overlaps, r)
+                    end
+                end
+                table.sort(
+                    overlaps,
+                    function (a, b)
+                        return a.start_y < b.start_y
+                    end
+                )
+
+                for _, r in ipairs(overlaps) do
+                    if start_y < r.start_y then
+                        local new_rect = {
+                            start_x = x,
+                            start_y = start_y,
+                            end_x = x,
+                            end_y = r.start_y - 1
+                        }
+                        table.insert(rectangles, new_rect)
+                        start_y = r.start_y
+                    end
+
+                    if start_y == r.start_y then
+                        r.end_x = r.end_x + 1
+
+                        if end_y == r.end_y then
+                            start_y = nil
+                            end_y = nil
+                        elseif end_y > r.end_y then
+                            start_y = r.end_y + 1
+                        end
+                    end
+                end
+
+                if start_y then
+                    local new_rect = {
+                        start_x = x,
+                        start_y = start_y,
+                        end_x = x,
+                        end_y = end_y
+                    }
+                    table.insert(rectangles, new_rect)
+                    start_y = nil
+                    end_y = nil
+                end
+            end
+        end
+
+        if start_y then
+            local new_rect = {
+                start_x = x,
+                start_y = start_y,
+                end_x = x,
+                end_y = end_y
+            }
+            table.insert(rectangles, new_rect)
+            start_y = nil
+            end_y = nil
+        end
+    end
+
+    -- Creation of Wall Collision Boxes --
+    for _, r in ipairs(rectangles) do
+        local start_x = r.start_x * 32
+        local start_y = r.start_y * 32
+        local width = (r.end_x - r.start_x + 1) * 32
+        local height = (r.end_y - r.start_y + 1) * 32
+
+        local box = collider:addRectangle(start_x, start_y, width, height)
+        collider:setPassive(box)
+    end
+
+    -- Neighorhoo Generation for Navigation Nodes --
     local ignore = {[inst.entities[1]] = 1}
     local checked = {}
     for a, node in pairs(nodes) do
@@ -237,6 +353,10 @@ function World.new(seed)
             end
         end
     end
+
+    gui.state = "Finalizing..."
+    gui.loaded = true
+    inst.tilesBatch = tilesBatch
 
     return inst
 end

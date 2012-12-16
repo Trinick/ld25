@@ -118,6 +118,19 @@ function Control:onClick(x, y, button)
             end
         end
     end
+
+    -- Pathfinding Debug --
+    if button == "r" then
+        if self.controlling[1] ~= nil then
+            if self.controlling[1] ~= 0 then
+                if self.controlling[1].x ~= nil then
+                    debugObj = self.controlling[1]
+                    debugPath = getPath(x, y, self.controlling[1].x, self.controlling[1].y, {[self.controlling[1].collision] = 1})
+                    debugPos = {x, y}
+                end
+            end
+        end
+    end
 end
 
 return Control

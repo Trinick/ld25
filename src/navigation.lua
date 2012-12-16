@@ -41,7 +41,6 @@ function getPath(startX, startY, targetX, targetY, ignoreSet)
         inClosedSet[current[1]] = 1
 
         if inTargetSet[current[1]] == 1 then
-            print(current[2])
             return reconstructPath(cameFrom, current[1])
         end
 
@@ -74,12 +73,10 @@ function getPath(startX, startY, targetX, targetY, ignoreSet)
 end
 
 function reconstructPath(cameFrom, current)
-    local data = world.nodes[current]
---    print(data.x, data.y, current, cameFrom[current])
     if cameFrom[current] ~= nil then
-        local asdf = reconstructPath(cameFrom, cameFrom[current])
-        table.insert(asdf, 1, current)
-        return asdf
+        local path = reconstructPath(cameFrom, cameFrom[current])
+        table.insert(path, 1, current)
+        return path
     end
     return {current}
 end
