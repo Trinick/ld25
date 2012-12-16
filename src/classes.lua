@@ -10,11 +10,11 @@ function ClassMgr.new()
 
     inst:initializeClass("spider", "Spider")
     inst:initializeClass("slime", "Slime")
-    inst:initializeClass("skeleton", "Skeleton")
+    inst:initializeClass("skeleton", "Skeleton", 16, 32)
     return inst
 end
 
-function ClassMgr:initializeClass(id, name)
+function ClassMgr:initializeClass(id, name, width, height)
     local tileset = love.graphics.newImage("art/images/" .. id .. ".png")
     local inst = {}
 
@@ -33,7 +33,7 @@ function ClassMgr:initializeClass(id, name)
 
     for y = 0, 2, 1 do
         for x = 0, 2, 1 do
-            quad = love.graphics.newQuad(((16 * x) + 8)+(x * 32), 8 + (y * 32), 32, 32, tileset:getWidth(), tileset:getHeight())
+            quad = love.graphics.newQuad(x * width, y * height, width, height, tileset:getWidth(), tileset:getHeight())
 
             table.insert(list[y + 1], quad)
         end
