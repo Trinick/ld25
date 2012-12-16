@@ -11,16 +11,9 @@ function World.new(seed)
 
     setmetatable(inst, World)
 
---    inst.player = Friendly.new(300, 300, 32, 32)
---    inst.entities = {inst.player}
-    inst.renderString = ""
-
-    inst.worldx = 0
-    inst.worldy = 0
-
     local lcg = LCG.new(seed)
-    local player = Friendly.new(300, 300, 32, 32)
-    local entities = {player}
+    local entities = {}
+    local nodes = {}
     local width = 100
     local height = 100
     local tiles = {}
@@ -31,8 +24,9 @@ function World.new(seed)
         end
     end
 
-    inst.player = player
+    inst.renderString = ""
     inst.entities = entities
+    inst.nodes = nodes
     inst.lcg = lcg
     inst.tiles = tiles
     inst.width = width
@@ -41,7 +35,6 @@ function World.new(seed)
 
     local rooms = {}
     local count = 8 + math.floor(lcg:random() * (width + height) / 2)
-    local spawnX, spawnY
 
     for j = 1, 2, 1 do
         for i = 0, count do
@@ -58,8 +51,11 @@ function World.new(seed)
                 room = { x = x, y = y, size = size, radius = radius}
 
                 if i == 0 then
-                    spawnX = x
-                    spawnY = y
+                    inst.worldX = 0 -- x * 32
+                    inst.worldY = 0 -- y * 32
+                    inst.player = Friendly.new(x * 32, y * 32, 32, 32)
+
+                    table.insert(inst.entities, inst.player)
                 end
 
                 local kx = x - radius
@@ -171,7 +167,8 @@ function World.new(seed)
         roofBottomLeftInverted = tile(6, 4),
         roofBottomRightInverted = tile(4, 4),
         wallTop = tile(5, 1),
-        floor = tile(0, 1)
+        floor = tile(0, 1),
+        rockA = tile(0, 2)
     }
     local tilesBatch = love.graphics.newSpriteBatch(tileset, width * height)
 
@@ -187,38 +184,54 @@ function World.new(seed)
             local southWest = not inst:getTile(x - 1, y + 1)
             local southWestSouth = not inst:getTile(x - 1, y + 2)
             local southSouth = not inst:getTile(x, y + 2)
+            local southSouthWest = not inst:getTile(x - 1, y + 2)
+            local southSouthEast = not inst:getTile(x + 1, y + 2)
             local east = not inst:getTile(x + 1, y)
             local eastEast = not inst:getTile(x + 2, y)
             local west = not inst:getTile(x - 1, y)
             local westWest = not inst:getTile(x - 2, y)
 
             -- This logic is definitely broken in some places, so fix it where necessary.
+            -- WARNING: Trying to understand this logic can cause suicidal thoughts.
 
             if not curr then
+                if (not north and not east and northEast) or
+                   (not south and not east and southEast) or
+                   (not north and not west and northWest) or
+                   (not south and not west and southWest) then
+                   table.insert(nodes, {x = x * 32, y = y * 32})
+                end
+
                 tilesBatch:addq(tilesetQuads.floor, x * 32, y * 32)
             else
                 tileCollision(x, y)
-                if north and south and west and not east and not southSouth then
+                if north and south and west and (not east or not southEast) and not southSouth then
                     tilesBatch:addq(tilesetQuads.roofBottomRightInverted, x * 32, y * 32)
-                elseif north and south and east and not west and not southSouth then
+                elseif north and south and east and (not west or not southWest) and not southSouth then
                     tilesBatch:addq(tilesetQuads.roofBottomLeftInverted, x * 32, y * 32)
                 elseif north and south and west and not east then
                     tilesBatch:addq(tilesetQuads.roofLeft, x * 32, y * 32)
                 elseif north and south and east and not west then
                     tilesBatch:addq(tilesetQuads.roofRight, x * 32, y * 32)
-                elseif north and east and not northEast then
+                elseif north and east and not northEast and southSouth then
                     tilesBatch:addq(tilesetQuads.roofBottomLeft, x * 32, y * 32)
                 elseif north and west and not northWest then
                     tilesBatch:addq(tilesetQuads.roofBottomRight, x * 32, y * 32)
-                elseif south and not north and not west then
+                elseif south and southSouth and not north and not west then
                     tilesBatch:addq(tilesetQuads.roofTopLeftInverted, x * 32, y * 32)
-                elseif south and not north and not east then
+                elseif south and southSouth and not north and not east then
                     tilesBatch:addq(tilesetQuads.roofTopRightInverted, x * 32, y * 32)
-                elseif south and not north then
-                    tilesBatch:addq(tilesetQuads.roofBottom, x * 32, y * 32)
+                elseif south and not north and southSouth then
+                    if not southSouthWest then
+                        tilesBatch:addq(tilesetQuads.roofTopLeftInverted, x * 32, y * 32)
+                    elseif not southSouthEast then
+                        tilesBatch:addq(tilesetQuads.roofTopRightInverted, x * 32, y * 32)
+                    else
+                        tilesBatch:addq(tilesetQuads.roofBottom, x * 32, y * 32)
+                    end
                 elseif (east or not eastEast) and (west or not westWest) and not south then
                     tilesBatch:addq(tilesetQuads.wallTop, x * 32, y * 32)
-                elseif east and west and south and not southSouth then
+                elseif (east or west) and south and not southSouth then
                     tilesBatch:addq(tilesetQuads.roofTop, x * 32, y * 32)
                 elseif west and south and not southEast then
                     tilesBatch:addq(tilesetQuads.roofLeft, x * 32, y * 32)
@@ -239,7 +252,7 @@ function World.new(seed)
 end
 
 function World:render()
-    love.graphics.translate(math.floor(self.worldx), math.floor(self.worldy))
+    love.graphics.translate(math.floor(self.worldX), math.floor(self.worldY))
     love.graphics.setColor(255, 255, 255)
     love.graphics.draw(self.tilesBatch)
 

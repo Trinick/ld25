@@ -9,8 +9,8 @@ function Control.new(world)
     inst.world = world;
     inst.currControl = {}
 
-    inst.worldx = 0
-    inst.worldy = 0
+    inst.worldX = 0
+    inst.worldY = 0
 
     return inst
 end
@@ -65,13 +65,15 @@ function Control:moveCheck(dt)
     if(love.keyboard.isDown("left")) then
         wew = 256 * dt
     end
-    self.world.worldx = self.world.worldx + wew
-    self.world.worldy = self.world.worldy + wns
+
+    self.world.worldX = self.world.worldX + wew
+    self.world.worldY = self.world.worldY + wns
 end
 
 function Control:onClick(x, y, button)
-    x = x - self.world.worldx
-    y = y - self.world.worldy
+    x = x - self.world.worldX
+    y = y - self.world.worldY
+
     if button == "l" then
         self.currControl[1] = 0
 

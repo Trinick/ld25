@@ -10,7 +10,7 @@ function love.load()
     tileset = love.graphics.newImage("art/tiles.png")
     tileset:setFilter("nearest", "linear")
 
-    world = World.new(1)
+    world = World.new(math.ceil(math.random() * 123456789))
     control = Control.new(world)
 end
 
