@@ -13,7 +13,6 @@ function Entity.new(x, y, width, height, world)
     inst.width = width
     inst.height = height
     inst.direction = 0
-    inst.hp = 100
 
     return inst
 end

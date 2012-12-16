@@ -40,11 +40,18 @@ function GUI:renderHUD()
     local target = control.controlling[control.controllingIndex]
 
     if target then
+        local class = target.entityClass
         local y = height - self.status:getHeight()
 
         love.graphics.draw(self.status, 0, y)
         love.graphics.setColor(255, 26, 26)
-        love.graphics.rectangle("fill", 78, y + 48, 184, 12)
+        love.graphics.rectangle("fill", 78, y + 48, math.ceil(184 * target.health / 100), 12)
+        love.graphics.setColor(255, 255, 255) -- TODO: unhardcode for each portrait instead of just spiders
+        love.graphics.draw(class.portrait, 14, y + 30)
+        love.graphics.setColor(89, 29, 71)
+        love.graphics.print(class.name, 79, y + 28)
+        love.graphics.setColor(255, 255, 255)
+        love.graphics.print(class.name, 77, y + 27)
     end
 end
 
