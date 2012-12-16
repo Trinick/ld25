@@ -239,7 +239,7 @@ function World.new(seed)
 end
 
 function World:render()
-    love.graphics.translate(self.worldx, self.worldy)
+    love.graphics.translate(math.floor(self.worldx), math.floor(self.worldy))
     love.graphics.setColor(255, 255, 255)
     love.graphics.draw(self.tilesBatch)
 
