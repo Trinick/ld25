@@ -1,22 +1,23 @@
 World = require "world"
-control = require "control"
-HC = require 'collision'
+Control = require "control"
+HC = require "collision"
+ClassMgr = require "classes"
 
 function love.load()
-    Collider = HC(100, on_collision, collision_stop)
-
     love.graphics.setBackgroundColor(89, 29, 71)
 
     tileset = love.graphics.newImage("art/tiles.png")
     tileset:setFilter("nearest", "linear")
 
+    collider = HC(100, onCollision, onCollisionStop)
+    classMgr = ClassMgr.new()
     world = World.new(math.ceil(math.random() * 123456789))
-    control = Control.new(world)
+    control = Control.new()
 end
 
 function love.update(dt)
     control:moveCheck(dt)
-    Collider:update(dt)
+    collider:update(dt)
 end
 
 function love.draw()

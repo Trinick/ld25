@@ -7,6 +7,7 @@ function Entity.new(x, y, width, height, world)
     setmetatable(inst, Entity)
 
     inst.class = "entity"
+    inst.entityClass = classMgr.classes[1]
 
     inst.x = x
     inst.y = y
@@ -18,12 +19,42 @@ function Entity.new(x, y, width, height, world)
 end
 
 function Entity:render()
-    love.graphics.setColor(255, 0, 0)
-    love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
+    local class = self.entityClass
+
+    if class == nil then
+        return
+    end
+
+    local dirs = {class.down, class.up, class.lr}
+
+    if self.stepFrac > 1 then
+        self.step = ((self.step + 1) % 3) + 1
+        self.stepFrac = 0
+    end
+
+    local direction = self.direction
+    local quad
+
+    if self.direction == 3 then
+        direction = 2
+        quad = dirs[direction + 1][self.step]
+
+        if self.flipped[self.step] ~= true then
+            quad:flip(true, false)
+            self.flipped[self.step] = true
+        end
+    elseif self.direction == 2 and self.flipped[self.step] then
+        quad = dirs[direction + 1][self.step]
+
+        self.flipped[self.step] = false
+        quad:flip(true, false)
+    end
+
+    love.graphics.drawq(class.tileset, dirs[direction + 1][self.step], self.x, self.y, 0, 2, 2, 0, 0)
 end
 
 function Entity:collisionCheck(x, y)
-	if x > self.x and x < self.x+self.width and y > self.y and y < self.y+self.height then
+	if x > self.x and x < self.x + self.width and y > self.y and y < self.y + self.height then
 		return 1
 	end
 	return 0
@@ -43,11 +74,11 @@ function Entity:attack()
             distance = math.sqrt(x^2 + y^2)
 
             if distance <= self.attackDist then
-                minangle = (3.14159/4)*self.direction - self.attackAngle/2
-                maxangle = minangle + self.attackAngle
+                minAngle = (3.14159/4) * self.direction - self.attackAngle / 2
+                maxAngle = minAngle + self.attackAngle
                 angle = Math.atan2(x,y)
 
-                if angle > minangle and angle < maxangle then
+                if angle > minAngle and angle < maxAngle then
                     entity.damage(self.attackDamage)
                     --create combat text for hit
                 else

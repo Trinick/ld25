@@ -12,6 +12,8 @@ You must follow the code style guidelines:
 
 1. Indent with four spaces
 2. Add a new line after each file
+3. Use camelBump case
+4. Spaces between operators and expressions
 
 ## Running & Building
 

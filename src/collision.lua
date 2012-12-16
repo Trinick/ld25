@@ -1,11 +1,14 @@
-HC = require 'hardoncollider'
-function on_collision(dt, shape_a, shape_b, mtv_x, mtv_y)
-    shape_a:move(mtv_x, mtv_y)
-    shape_a.instance.x = shape_a.instance.x + mtv_x
-    shape_a.instance.y = shape_a.instance.y + mtv_y
+HC = require "hardoncollider"
+
+function onCollision(dt, shapeA, shapeB, mtvX, mtvY)
+    shapeA:move(mtv_x, mtv_y)
+    shapeA.instance.x = shapeA.instance.x + mtvX
+    shapeA.instance.y = shapeA.instance.y + mtvY
 end
-function collision_stop(dt, shape_a, shape_b)
+
+function onCollisionStop(dt, shape_a, shape_b)
 end
+
 function raycast(startX, startY, endX, endY, ignoreSet)
     local difX = endX - startX
     local difY = endY - startY

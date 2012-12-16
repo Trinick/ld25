@@ -14,6 +14,9 @@ function Friendly.new(x, y, width, height, world)
     inst.width = width
     inst.height = height
     inst.direction = 0
+    inst.step = 1
+    inst.stepFrac = 0
+    inst.flipped = {false, false, false}
 
     inst.moveSpeed = 64
 
@@ -22,7 +25,7 @@ function Friendly.new(x, y, width, height, world)
 
     inst.health = 100
 
-    inst.collision = Collider:addRectangle(x, y, width, height)
+    inst.collision = collider:addRectangle(x, y, width, height)
     inst.collision.instance = inst
 
     return inst

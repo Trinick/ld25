@@ -1,16 +1,12 @@
 Control = {}
 Control.__index = Control
 
-function Control.new(world)
+function Control.new()
     local inst = {}
 
     setmetatable(inst, Control)
 
-    inst.world = world;
     inst.currControl = {}
-
-    inst.worldX = 0
-    inst.worldY = 0
 
     return inst
 end
@@ -23,15 +19,19 @@ function Control:moveCheck(dt)
 
             if love.keyboard.isDown("w") then
                 ens = entity.moveSpeed * -dt
+                entity.direction = 1
             end
             if love.keyboard.isDown("d") then
                 eew = entity.moveSpeed * dt
+                entity.direction = 2
             end
             if love.keyboard.isDown("s") then
                 ens = entity.moveSpeed * dt
+                entity.direction = 0
             end
             if love.keyboard.isDown("a") then
                 eew = entity.moveSpeed * -dt
+                entity.direction = 3
             end
 
             if ens ~= 0 and eew ~= 0 then
@@ -42,6 +42,7 @@ function Control:moveCheck(dt)
 
             entity.x = entity.x + eew
             entity.y = entity.y + ens
+            entity.stepFrac = entity.stepfrac + (dt*4)
 
             if entity.collision ~= nil then
                 entity.collision:move(eew, ens)
@@ -66,18 +67,18 @@ function Control:moveCheck(dt)
         wew = 256 * dt
     end
 
-    self.world.worldX = self.world.worldX + wew
-    self.world.worldY = self.world.worldY + wns
+    world.cameraX = world.cameraX + wew
+    world.cameraY = world.cameraY + wns
 end
 
 function Control:onClick(x, y, button)
-    x = x - self.world.worldX
-    y = y - self.world.worldY
+    x = x - world.cameraX
+    y = y - world.cameraY
 
     if button == "l" then
         self.currControl[1] = 0
 
-        for i, entity in pairs(self.world.entities) do
+        for i, entity in pairs(world.entities) do
             if entity:collisionCheck(x, y) == 1 then
                 self.currControl[1] = entity
             end
