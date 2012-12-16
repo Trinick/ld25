@@ -7,7 +7,7 @@ GUI = require "gui"
 function love.load()
     love.graphics.setBackgroundColor(89, 29, 71)
 
-    tileset = love.graphics.newImage("art/tiles.png")
+    tileset = love.graphics.newImage("art/images/tiles.png")
     font = love.graphics.newFont("art/fonts/04b03.ttf", 17)
     gui = GUI.new()
     collider = HC(100, onCollision, onCollisionStop)
