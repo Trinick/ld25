@@ -51,8 +51,8 @@ function World.new(seed)
                 room = { x = x, y = y, size = size, radius = radius}
 
                 if i == 0 then
-                    inst.cameraX = x * 10
-                    inst.cameraY = y * 10
+                    inst.cameraX = -x * 10
+                    inst.cameraY = -y * 10
                     inst.player = Friendly.new(x * 32, y * 32, 64, 64)
 
                     table.insert(inst.entities, inst.player)
@@ -214,7 +214,7 @@ function World.new(seed)
 end
 
 function World:render()
-    love.graphics.translate(math.floor(self.cameraX), math.floor(self.cameraY))
+    love.graphics.translate(math.floor(self.cameraX) + love.graphics.getWidth() / 2, math.floor(self.cameraY) + love.graphics.getHeight() / 2)
     love.graphics.setColor(255, 255, 255)
     love.graphics.draw(self.tilesBatch)
 
