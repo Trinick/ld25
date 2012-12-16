@@ -34,6 +34,11 @@ function Control:moveCheck(dt)
                 eew = entity.moveSpeed * -dt
             end
 
+            if ens ~= 0 and eew ~= 0 then
+                ens = ens / 2
+                eew = eew / 2
+            end
+
             entity.x = entity.x + eew
             entity.y = entity.y + ens
 
