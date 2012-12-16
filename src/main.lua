@@ -14,6 +14,8 @@ function love.load()
     classMgr = ClassMgrMeta.new()
     world = World.new(math.ceil(math.random() * 123456789))
     control = Control.new()
+
+    gui:renderMap()
 end
 
 function love.update(dt)

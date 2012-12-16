@@ -12,8 +12,24 @@ function GUI.new()
     inst.skull = love.graphics.newImage("art/images/skull.png")
     inst.status = love.graphics.newImage("art/images/status.png")
     inst.map = love.graphics.newImage("art/images/map.png")
+    inst.mapCanvas = nil
 
     return inst
+end
+
+function GUI:renderMap()
+    self.mapCanvas = love.graphics.newCanvas(world.width, world.height)
+    self.mapCanvas:renderTo(function()
+        love.graphics.setColor(0, 0, 0)
+
+        for x = 0, world.width do
+            for y = 0, world.height do
+                if world:getTile(x, y) then
+                    love.graphics.point(x, y)
+                end
+            end
+        end
+    end)
 end
 
 function GUI:renderLoading()
@@ -52,6 +68,17 @@ function GUI:renderHUD()
         love.graphics.print(class.name, 79, y + 28)
         love.graphics.setColor(255, 255, 255)
         love.graphics.print(class.name, 77, y + 27)
+    end
+
+    local x = width - self.map:getWidth()
+
+    love.graphics.draw(self.map, x, 0)
+    love.graphics.setColor(0, 0, 0)
+    love.graphics.draw(self.mapCanvas, x + 56, 36)
+    love.graphics.setColor(255, 0, 0)
+
+    for i, entity in pairs(world.entities) do
+        love.graphics.point(math.floor(x + entity.x / 32 + 56), math.floor(entity.y / 32 + 36))
     end
 end
 
