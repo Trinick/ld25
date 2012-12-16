@@ -150,25 +150,16 @@ function World.new(seed)
 
     function tileCollision(x, y)
         local box = Collider:addRectangle(x * 32, y * 32, 32, 32)
+
         Collider:setPassive(box)
     end
 
     local tilesetQuads = {
-        roofTop = tile(5, 0),
-        roofTopLeft = tile(4, 0),
-        roofTopRight = tile(6, 0),
-        roofTopLeftInverted = tile(6, 5),
-        roofTopRightInverted = tile(4, 5),
-        roofLeft = tile(4, 1),
-        roofRight = tile(6, 1),
-        roofBottom = tile(5, 3),
-        roofBottomLeft = tile(4, 3),
-        roofBottomRight = tile(6, 3),
-        roofBottomLeftInverted = tile(6, 4),
-        roofBottomRightInverted = tile(4, 4),
-        wallTop = tile(5, 1),
-        floor = tile(0, 1),
-        rockA = tile(0, 2)
+        wall = tile(4, 1),
+        wallLeft = tile(4, 0),
+        wallRight = tile(4, 2),
+        roof = tile(5, 3),
+        floor = tile(0, 1)
     }
     local tilesBatch = love.graphics.newSpriteBatch(tileset, width * height)
 
@@ -205,42 +196,13 @@ function World.new(seed)
                 tilesBatch:addq(tilesetQuads.floor, x * 32, y * 32)
             else
                 tileCollision(x, y)
-                if north and south and west and (not east or not southEast) and not southSouth then
-                    tilesBatch:addq(tilesetQuads.roofBottomRightInverted, x * 32, y * 32)
-                elseif north and south and east and (not west or not southWest) and not southSouth then
-                    tilesBatch:addq(tilesetQuads.roofBottomLeftInverted, x * 32, y * 32)
-                elseif north and south and west and not east then
-                    tilesBatch:addq(tilesetQuads.roofLeft, x * 32, y * 32)
-                elseif north and south and east and not west then
-                    tilesBatch:addq(tilesetQuads.roofRight, x * 32, y * 32)
-                elseif north and east and not northEast and southSouth then
-                    tilesBatch:addq(tilesetQuads.roofBottomLeft, x * 32, y * 32)
-                elseif north and west and not northWest then
-                    tilesBatch:addq(tilesetQuads.roofBottomRight, x * 32, y * 32)
-                elseif south and southSouth and not north and not west then
-                    tilesBatch:addq(tilesetQuads.roofTopLeftInverted, x * 32, y * 32)
-                elseif south and southSouth and not north and not east then
-                    tilesBatch:addq(tilesetQuads.roofTopRightInverted, x * 32, y * 32)
-                elseif south and not north and southSouth then
-                    if not southSouthWest then
-                        tilesBatch:addq(tilesetQuads.roofTopLeftInverted, x * 32, y * 32)
-                    elseif not southSouthEast then
-                        tilesBatch:addq(tilesetQuads.roofTopRightInverted, x * 32, y * 32)
-                    else
-                        tilesBatch:addq(tilesetQuads.roofBottom, x * 32, y * 32)
-                    end
-                elseif (east or not eastEast) and (west or not westWest) and not south then
-                    tilesBatch:addq(tilesetQuads.wallTop, x * 32, y * 32)
-                elseif (east or west) and south and not southSouth then
-                    tilesBatch:addq(tilesetQuads.roofTop, x * 32, y * 32)
-                elseif west and south and not southEast then
-                    tilesBatch:addq(tilesetQuads.roofLeft, x * 32, y * 32)
-                elseif east and south and southEast and not southEastSouth then
-                    tilesBatch:addq(tilesetQuads.roofTopLeft, x * 32, y * 32)
-                elseif east and south and not southWest then
-                    tilesBatch:addq(tilesetQuads.roofRight, x * 32, y * 32)
-                elseif west and south and southWest and not southWestSouth then
-                    tilesBatch:addq(tilesetQuads.roofTopRight, x * 32, y * 32)
+
+                if not south then
+                    tilesBatch:addq(tilesetQuads.wall, x * 32, y * 32)
+                elseif (not north or not east or not south or not west) or
+                       (not southEast or not southWest or not northEast or not northWest) or
+                       (not southSouth or not southSouthEast or not southSouthWest) then
+                    tilesBatch:addq(tilesetQuads.roof, x * 32, y * 32)
                 end
             end
         end
