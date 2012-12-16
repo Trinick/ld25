@@ -49,8 +49,6 @@ You must follow the code style guidelines:
 3. Use camelBump case
 4. Spaces between operators and expressions
 
-## Contributing
-
 ### Windows
 
 1. `util/dist.bat` will zip all of the source into a .love file, turn it into an executable and then run it
