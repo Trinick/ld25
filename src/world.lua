@@ -198,7 +198,7 @@ function World.new(seed)
                    (not south and not east and southEast) or
                    (not north and not west and northWest) or
                    (not south and not west and southWest) then
-                   table.insert(nodes, {x = x * 32, y = y * 32})
+                   table.insert(nodes, {x = x * 32, y = y * 32, neighbors = {}})
                 end
 
                 tilesBatch:addq(tilesetQuads.floor, x * 32, y * 32)
@@ -219,6 +219,24 @@ function World.new(seed)
     gui.state = "Finalizing..."
     gui.loaded = true
     inst.tilesBatch = tilesBatch
+
+    local ignore = {[inst.entities[1]] = 1}
+    local checked = {}
+    for a, node in pairs(nodes) do
+        checked[a] = {}
+    end
+    for a, nodeA in pairs(nodes) do
+        for b, nodeB in pairs(nodes) do
+            if a ~= b and checked[a][b] == nil then
+                if # raycast(nodeA.x, nodeA.y, nodeB.x, nodeB.y, ignore) == 0 then
+                    checked[a][b] = 1
+                    checked[b][a] = 1
+                    table.insert(nodeA.neighbors, b)
+                    table.insert(nodeB.neighbors, a)
+                end
+            end
+        end
+    end
 
     return inst
 end
