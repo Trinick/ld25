@@ -48,7 +48,7 @@ function Entity:render()
         self.flipped[self.step] = false
         quad:flip(true, false)
     end
-    love.graphics.drawq(class.tileset, quad, self.x, self.y, 0, 2, 2, 0, 0)
+    love.graphics.drawq(class.tileset, quad, self.x, self.y, 0, 1, 1, 0, 0)
 end
 
 function Entity:collisionCheck(x, y)

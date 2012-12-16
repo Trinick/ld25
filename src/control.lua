@@ -74,8 +74,8 @@ function Control:moveCheck(dt)
 end
 
 function Control:onClick(x, y, button)
-    x = x - world.cameraX
-    y = y - world.cameraY
+    x = x - world.cameraX - love.graphics.getWidth() / 2
+    y = y - world.cameraY - love.graphics.getHeight() / 2
     print(x .. " " .. y)
     if button == "l" then
         self.currControl[1] = 0

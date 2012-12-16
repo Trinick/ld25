@@ -1,7 +1,7 @@
 HC = require "hardoncollider"
 
 function onCollision(dt, shapeA, shapeB, mtvX, mtvY)
-    shapeA:move(mtv_x, mtv_y)
+    shapeA:move(mtvX, mtvY)
     shapeA.instance.x = shapeA.instance.x + mtvX
     shapeA.instance.y = shapeA.instance.y + mtvY
 end
