@@ -36,12 +36,12 @@ end
 
 --- Load all sound effects (not music) into this object.
 function AudioCtl:loadAllSfx()
-    self:loadEffect("pop", "sound/pop.wav", 1.0)
+    self:loadEffect("pop", "art/sounds/pop.wav", 1.0)
 end
 
 --- Prepare all music for streaming from disk, but don't play any of it.
 function AudioCtl:loadAllSongs()
-    self:loadSong("derpy", "easy_dungeon", "sound/derpybgm.ogg", 1.0);
+    self:loadSong("derpy", "easy_dungeon", "art/sounds/derpybgm.ogg", 1.0);
 end
 
 --- Load a sound effect NAME from location PATH with volume VOL.

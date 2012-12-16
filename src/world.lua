@@ -36,6 +36,8 @@ function World.new(seed)
     local rooms = {}
     local count = 8 + math.floor(lcg:random() * (width + height) / 2)
 
+    gui.state = "Generating..."
+
     for j = 1, 2, 1 do
         for i = 0, count do
             if j == 1 then
@@ -54,7 +56,7 @@ function World.new(seed)
                     inst.player = Friendly.new(x * 32, y * 32, 32, 32)
                     inst.cameraX = -x * 32
                     inst.cameraY = -y * 32
-                    print("Inserting into table")
+
                     table.insert(inst.entities, inst.player)
                 end
 
@@ -144,6 +146,8 @@ function World.new(seed)
         end
     end
 
+    gui.state = "Placing..."
+
     function tile(x, y)
         return love.graphics.newQuad(x * 32, y * 32, 32, 32, tileset:getWidth(), tileset:getHeight())
     end
@@ -208,6 +212,8 @@ function World.new(seed)
         end
     end
 
+    gui.state = "Finalizing..."
+    gui.loaded = true
     inst.tilesBatch = tilesBatch
 
     return inst

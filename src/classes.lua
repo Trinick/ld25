@@ -15,7 +15,7 @@ function ClassMgr.new()
 end
 
 function ClassMgr:initializeClass(class)
-    local tileset = love.graphics.newImage("art/" .. class .. ".png")
+    local tileset = love.graphics.newImage("art/images/" .. class .. ".png")
     tileset:setFilter("nearest", "linear")
 
     local inst = {}
@@ -28,8 +28,6 @@ function ClassMgr:initializeClass(class)
     local list = {inst.down, inst.up, inst.lr}
 
     table.insert(self.classes, inst)
-
-    print(#self.classes)
 
     local quad
 
