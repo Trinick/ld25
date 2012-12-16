@@ -126,15 +126,9 @@ end
 function AudioCtl:playSong(song)
     sound = nil
     volume = 1.0
-
-    for songName, songObj in pairs(self.allMusic) do
-        if songName == song then
-            sound = songObj
-            volume = self.musicVolumes[songName]
-
-            break
-        end
-    end
+    local songObj = self.allMusic[song]
+    sound = songObj
+    volume = self.musicVolumes[song]    
 
     if sound == nil then
         return

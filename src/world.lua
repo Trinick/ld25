@@ -2,6 +2,7 @@ Entity = require "entity"
 Friendly = require "friendly"
 Enemy = require "enemy"
 LCG = require "lcg"
+AudioCtl = require "audio"
 
 World = {}
 World.__index = World
@@ -23,6 +24,9 @@ function World.new(seed)
             tiles[x .. "_" .. y] = false
         end
     end
+
+    inst.audioCtlr = AudioCtl.new()
+    inst.audioCtlr:playSong("derpy")
 
     inst.renderString = ""
     inst.entities = entities
