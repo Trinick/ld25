@@ -8,19 +8,19 @@ function ClassMgr.new()
 
     inst.classes = {}
 
-    inst:initializeClass("spider")
-    inst:initializeClass("slime")
-    inst:initializeClass("skeleton")
+    inst:initializeClass("spider", "Spider")
+    inst:initializeClass("slime", "Slime")
+    inst:initializeClass("skeleton", "Skeleton")
     return inst
 end
 
-function ClassMgr:initializeClass(class)
-    local tileset = love.graphics.newImage("art/" .. class .. ".png")
-    tileset:setFilter("nearest", "linear")
-
+function ClassMgr:initializeClass(id, name)
+    local tileset = love.graphics.newImage("art/images/" .. id .. ".png")
     local inst = {}
 
+    inst.name = name
     inst.tileset = tileset
+    inst.portrait = love.graphics.newImage("art/images/portrait_" .. id .. ".png")
     inst.down = {}
     inst.up = {}
     inst.lr = {}
@@ -28,8 +28,6 @@ function ClassMgr:initializeClass(class)
     local list = {inst.down, inst.up, inst.lr}
 
     table.insert(self.classes, inst)
-
-    print(#self.classes)
 
     local quad
 

@@ -36,6 +36,8 @@ function World.new(seed)
     local rooms = {}
     local count = 8 + math.floor(lcg:random() * (width + height) / 2)
 
+    gui.state = "Generating..."
+
     for j = 1, 2, 1 do
         for i = 0, count do
             if j == 1 then
@@ -51,10 +53,10 @@ function World.new(seed)
                 room = { x = x, y = y, size = size, radius = radius}
 
                 if i == 0 then
-                    inst.player = Friendly.new(x * -10, y*-10, 64, 64)
-                    inst.cameraX = x * -10
-                    inst.cameraY = y * -10
-                    print("Inserting into table")
+                    inst.player = Friendly.new(x * 32, y * 32, 32, 32)
+                    inst.cameraX = -x * 32
+                    inst.cameraY = -y * 32
+
                     table.insert(inst.entities, inst.player)
                 end
 
@@ -144,6 +146,8 @@ function World.new(seed)
         end
     end
 
+    gui.state = "Placing..."
+
     function tile(x, y)
         return love.graphics.newQuad(x * 32, y * 32, 32, 32, tileset:getWidth(), tileset:getHeight())
     end
@@ -208,13 +212,16 @@ function World.new(seed)
         end
     end
 
+    gui.state = "Finalizing..."
+    gui.loaded = true
     inst.tilesBatch = tilesBatch
 
     return inst
 end
 
 function World:render()
-    love.graphics.translate(math.floor(self.cameraX), math.floor(self.cameraY))
+    love.graphics.push()
+    love.graphics.translate(math.floor(self.cameraX + love.graphics.getWidth() / 2), math.floor(self.cameraY + love.graphics.getHeight() / 2))
     love.graphics.setColor(255, 255, 255)
     love.graphics.draw(self.tilesBatch)
 
@@ -225,6 +232,8 @@ function World:render()
     if self.renderString ~= "" then
         love.graphics.printf(self.renderString, 0, 0, 800)
     end
+
+    love.graphics.pop()
 end
 
 function World:setTile(x, y, bit)
