@@ -29,41 +29,34 @@ function Control:moveCheck(dt)
 
         if w then
             dy = entity.moveSpeed * -dt
-            entity.direction = 1
         end
         if s then
             dy = entity.moveSpeed * dt
-            entity.direction = 0
         end
         if d then
             dx = entity.moveSpeed * dt
-            entity.direction = 2
         end
         if a then
             dx = entity.moveSpeed * -dt
-            entity.direction = 3
         end
 
+        local hasCmds = # entity.cmds > 0
+
         if w or a or s or d then
-            entity:clearCmds()
-            entity:stop()
+            if hasCmds then
+                entity:clearCmds()
+                entity:stop()
+            end
             self.moving = true
         else
             self.moving = false
         end
 
-        if entity.collision ~= nil then
-            entity.collision:move(dx, dy)
-            local cx, cy = entity.collision:center() 
-            entity.cx = cx
-            entity.cy = cy
-        end
         if dy ~= 0 or dx ~= 0 then
             entityMoveTo(entity, dt, {entity.cx + dx, entity.cy + dy, 2})
-            entity.stepFrac = entity.stepFrac + (dt*4)
         end
 
-        if dy == 0 and dx == 0 then
+        if dy == 0 and dx == 0 and not hasCmds then
             entity.stepFrac = 0
             entity.step = 1
         end
