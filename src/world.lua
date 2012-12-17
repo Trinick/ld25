@@ -404,7 +404,7 @@ function World:populate()
         y = self.rooms[room].y
         Friendly.new(x*32, y*32, "Ghost")
     end
-    local ranroom = self.rooms[math.floor(((world.lcg:random() * 10) % (#self.rooms-1)) + 1)]
+    local ranroom = self.rooms[#self.rooms-1]
     local enemyx = ranroom.x
     local enemyy = ranroom.y
     local debugEnemy = Enemy.new(enemyx * 32, enemyy * 32, "HeroKnight")
