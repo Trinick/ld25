@@ -39,6 +39,7 @@ function Enemy.new(x, y, class)
     inst.flipped = {false, false, false}
     inst.canBeControlled = true
     inst.cmds = {}
+    inst.color = {255, 255, 255}
 
     inst.moveSpeed = entityClass.moveSpeed
 
@@ -85,6 +86,9 @@ function Enemy:attack()
         enemy = enemy.instance
         if enemy ~= nil then
             if enemy.className == "friendly" then
+                enemy.damageblinkend = 0.10
+                enemy.oldcolor = enemy.color
+                enemy.color = {255, 96, 96}
                 enemy.health = enemy.health - self.damage
                 if enemy.health < 0 then enemy:delete() end
             end

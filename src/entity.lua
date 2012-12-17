@@ -157,4 +157,15 @@ function Entity:delete()
     self = nil
 end
 
+function Entity:update(dt)
+    if(self.damageblinkend ~= nil) then
+        self.damageblinkend = self.damageblinkend - dt
+        if self.damageblinkend <= 0 then
+            self.color = self.oldcolor
+            self.oldcolor = nil
+            self.damageblinkend = nil
+        end
+    end
+end
+
 return Entity

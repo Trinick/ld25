@@ -431,9 +431,9 @@ function World:render()
     end
 
     for i, entity in pairs(self.entities) do
-        love.graphics.setColor(255, 255, 255)
+        love.graphics.setColor(entity.color[1], entity.color[2], entity.color[3])
         if isControlled(entity) then
-            love.graphics.setColor(189, 129, 171)
+            love.graphics.setColor(math.abs(entity.color[1]-66), math.abs(entity.color[2]-126), math.abs(entity.color[3]-84))
         end
 
         entity:render()
@@ -451,6 +451,9 @@ function World:getTile(x, y)
 end
 
 function World:update(dt)
+    for a, entity in pairs(self.entities) do
+        entity:update(dt)
+    end
     for a, entity in pairs(self.entities) do
         entity:think(dt)
     end
