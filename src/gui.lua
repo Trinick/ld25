@@ -57,7 +57,7 @@ end
 function GUI:renderHUD()
     local width = love.graphics.getWidth()
     local height = love.graphics.getHeight()
-    local target = control.controlling[control.controllingIndex]
+    local target = control.controlling
 
     if target then
         local class = target.entityClass
