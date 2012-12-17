@@ -1,6 +1,8 @@
 Entity = {}
 Entity.__index = Entity
 
+drawLine = {}
+
 function Entity.new(x, y, width, height, world)
     local inst = {}
 
@@ -66,31 +68,41 @@ function Entity:collisionCheck(x, y)
 	return 0
 end
 
+function Entity:spawnEnemy()
+    Enemy.new(self.x + 50, self.y, 32, 64, world)
+end
+
 function Entity:attack()
-    for i, entity in pairs(self.world.entities) do
-        if entity.class == 0x02 and self.class == 0x01 then
-            pass = 1
-        elseif entity.class == 0x01 and self.class == 0x02 then
-            pass = 1
+    local ignoreSet = {self.collision}
+    for i, entity in pairs(world.entities) do
+        if entity.className ~= "enemy" then
+            table.insert(ignoreSet, entity)
+        else
+            print("Enemy!")
         end
+    end
+    local targetX = self.x
+    local targetY = self.y
 
-        if pass == 1 then
-            x = self.x - inst.x
-            y = self.y - inst.y
-            distance = math.sqrt(x^2 + y^2)
+    if self.direction == 0 then
+        targetY = self.y + 50
+    elseif self.direction == 1 then
+        targetY = self.y - 50
+    elseif self.direction == 2 then
+        targetX = self.x + 50
+    elseif self.direction == 3 then
+        targetX = self.x - 50
+    end
 
-            if distance <= self.attackDist then
-                minAngle = (3.14159/4) * self.direction - self.attackAngle / 2
-                maxAngle = minAngle + self.attackAngle
-                angle = Math.atan2(x,y)
-
-                if angle > minAngle and angle < maxAngle then
-                    entity.damage(self.attackDamage)
-                    --create combat text for hit
-                else
-                    --create combat text for miss
-                end 
-            end
+    local retSet = raycast(self.x, self.y, targetX, targetY, ignoreSet)
+    if #retSet == 0 then
+        return
+    end
+    for e, enemy in pairs(retSet) do
+        enemy = enemy.instance
+        if(enemy.className == "enemy") then
+            enemy.health = enemy.health - 10
+            if enemy.health < 0 then enemy:delete() end
         end
     end
 end

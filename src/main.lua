@@ -67,6 +67,16 @@ function love.draw()
 end
 
 function love.keypressed(button)
+    if button == " " then
+        for i, entity in pairs(control.controlling) do
+            entity:attack()
+        end
+    end
+    if button == "rctrl" then
+        for i, entity in pairs(control.controlling) do
+            entity:spawnEnemy()
+        end
+    end
     if gui.loaded and not gui.ready then
         gui.ready = true
     end

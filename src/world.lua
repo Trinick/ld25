@@ -421,6 +421,7 @@ function World:render()
     end
 
     for i, entity in pairs(self.entities) do
+        love.graphics.setColor(255, 255, 255)
         if isControlled(entity) then
             love.graphics.setColor(189, 129, 171)
         end
