@@ -91,9 +91,11 @@ function Entity:clearCmds()
     self.cmds = {}
 end
 function Entity:popCmd(cmd)
-    if self.cmds[1][1] == cmd then
-        self.curCmd = nil
-        table.remove(self.cmds, 1)
+    if # self.cmds > 0 then
+        if self.cmds[1][1] == cmd then
+            self.curCmd = nil
+            table.remove(self.cmds, 1)
+        end
     end
 end
 function Entity:pushCmd(cmd, args)
@@ -108,9 +110,17 @@ end
 function Entity:stop()
     self.step = 1
     self.stepFrac = 0
+    self.isPatrolling = false
+    self.patrolPos = nil
+    self.waitTime = 0
 end
 function Entity:think(dt)
     self:processCmds(dt)
+end
+function Entity:onHitWall()
+    if self.isPatrolling and self.patrolPos ~= nil then
+        self:stop()
+    end
 end
 
 function entityMoveTo(entity, dt, args)
@@ -150,6 +160,72 @@ function entityMoveTo(entity, dt, args)
         local cx, cy = entity.collision:center()
         entity.cx = cx
         entity.cy = cy
+    end
+end
+function entityPatrol(entity, dt, args)
+    local isPatrolling = args[1]
+    entity.isPatrolling = isPatrolling
+
+    if entity.waitTime == nil then
+        entity.waitTime = 0
+    end
+
+    if isPatrolling then
+        if entity.waitTime > 0 then
+            entity.waitTime = entity.waitTime - dt
+        else
+            local x = 0
+            local y = 0
+            if entity.patrolPos == nil then
+                local range = args[2] * math.random()
+                while true do
+                    local angle = math.random() * math.pi * 2
+                    x = range * math.cos(angle) + entity.cx
+                    y = range * math.sin(angle) + entity.cy
+                    if # raycast(entity.cx, entity.cy, x, y, nil, true, true) == 0 then
+                        entity.patrolPos = {x, y}
+                        break
+                    end
+                end
+            else
+                x = entity.patrolPos[1]
+                y = entity.patrolPos[2]
+            end
+
+            local minDist = args[3]
+            local cx, cy = entity.collision:center()
+            local dx = x - cx
+            local dy = y - cy
+            local len = math.sqrt(math.pow(dx, 2) + math.pow(dy, 2))
+
+            if len <= minDist then
+                entity:stop()
+                entity.waitTime = args[4] * math.random()
+            else
+                dx = dx / len
+                dy = dy / len
+
+                if math.abs(dy) >= math.abs(dx) then
+                    if dy >= 0 then
+                        entity.direction = 0
+                    else
+                        entity.direction = 1
+                    end
+                else
+                    if dx >= 0 then
+                        entity.direction = 2
+                    else
+                        entity.direction = 3
+                    end
+                end
+
+                entity.stepFrac = entity.stepFrac + dt * 4
+                entity.collision:move(dt * dx * entity.moveSpeed, dt * dy * entity.moveSpeed)
+                local cx, cy = entity.collision:center()
+                entity.cx = cx
+                entity.cy = cy
+            end
+        end
     end
 end
 

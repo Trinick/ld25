@@ -550,7 +550,7 @@ function World:render()
     love.graphics.draw(self.tilesBatch)
 
     function sortEntities(a, b)
-        return a.cy < b.cy
+        return math.floor(a.cy) < math.floor(b.cy)
     end
 
     table.sort(self.entities, sortEntities)

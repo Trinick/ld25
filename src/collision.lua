@@ -6,6 +6,7 @@ function onCollision(dt, shapeA, shapeB, mtvX, mtvY)
         local cx, cy = shapeA:center()
         shapeA.instance.cx = cx
         shapeA.instance.cy = cy
+        shapeA.instance:onHitWall()
     else
         shapeA:move(mtvX / 2, mtvY / 2)
         local cx, cy = shapeA:center()
