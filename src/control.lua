@@ -206,7 +206,7 @@ function Control:onMouseDown(x, y, button)
         for i, ent in pairs(self.selectedEntities) do
             ent:clearCmds()
             ent:stop()
-            local path = getPath(x, y, ent.cx + 16, ent.cy + 16, {[ent.collision] = 1})
+            local path = getPath(ent.cx + 16, ent.cy + 16, x, y, {[ent.collision] = 1})
             if path == nil then
             elseif path == 0 then
                 ent:pushCmd(entityMoveTo, {x, y, 2})

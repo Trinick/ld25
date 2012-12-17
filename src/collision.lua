@@ -12,13 +12,13 @@ function onCollision(dt, shapeA, shapeB, mtvX, mtvY)
         local cx, cy = shapeA:center()
         shapeA.instance.cx = cx
         shapeA.instance.cy = cy
-        shapeA.instance:onHitEntity(shapeB)
+        shapeA.instance:onHitEntity(shapeB.instance)
 
         shapeB:move(-mtvX / 2, -mtvY / 2)
         cx, cy = shapeB:center()
         shapeB.instance.cx = cx
         shapeB.instance.cy = cy
-        shapeB.instance:onHitEntity(shapeA)
+        shapeB.instance:onHitEntity(shapeA.instance)
     end
 end
 

@@ -75,7 +75,7 @@ end
 function reconstructPath(cameFrom, current)
     if cameFrom[current] ~= nil then
         local path = reconstructPath(cameFrom, cameFrom[current])
-        table.insert(path, 1, current)
+        table.insert(path, current)
         return path
     end
     return {current}
