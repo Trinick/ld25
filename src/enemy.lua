@@ -27,7 +27,7 @@ function Enemy.new(x, y, width, height, world)
 end
 
 function Enemy:think(dt)
-    self:processCmds()
+    self:processCmds(dt)
 end
 
 return Enemy

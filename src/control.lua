@@ -42,6 +42,8 @@ function Control:moveCheck(dt)
             end
 
             if w or a or s or d then
+                entity:clearCmds()
+                entity:stop()
                 self.moving = true
             else
                 self.moving = false
@@ -53,19 +55,22 @@ function Control:moveCheck(dt)
                 eew = eew * root2div2
             end
 
-            if ens ~= 0 or eew ~= 0 then
-                entity.x = entity.x + eew
-                entity.y = entity.y + ens
-                entity.stepFrac = entity.stepFrac + (dt*4)
-            end
-
-            if ens == 0 and eew == 0 then
-                entity.stepFrac = 0
-                entity.step = 1
-            end
-
             if entity.collision ~= nil then
                 entity.collision:move(eew, ens)
+                local x1, y1, x2, y2 = entity.collision:bbox() 
+                entity.x = x1
+                entity.y = y1
+            else
+                if ens ~= 0 or eew ~= 0 then
+                    entity.x = entity.x + eew
+                    entity.y = entity.y + ens
+                    entity.stepFrac = entity.stepFrac + (dt*4)
+                end
+
+                if ens == 0 and eew == 0 then
+                    entity.stepFrac = 0
+                    entity.step = 1
+                end
             end
         end
         end
@@ -159,8 +164,19 @@ function Control:onClick(x, y, button)
         if self.controlling[1] ~= nil then
             if self.controlling[1] ~= 0 then
                 if self.controlling[1].x ~= nil then
+                    self.controlling[1]:clearCmds()
+                    self.controlling[1]:stop()
                     debugObj = self.controlling[1]
                     debugPath = getPath(x, y, self.controlling[1].x + 16, self.controlling[1].y + 16, {[self.controlling[1].collision] = 1})
+                    if debugPath == nil then
+                    elseif debugPath == 0 then
+                        self.controlling[1]:pushCmd(entityMoveTo, {x, y, 4})
+                    elseif # debugPath > 0 then
+                        for a, node in pairs(debugPath) do
+                            self.controlling[1]:pushCmd(entityMoveTo, {world.nodes[node].x, world.nodes[node].y, 4})
+                        end
+                        self.controlling[1]:pushCmd(entityMoveTo, {x, y, 4})
+                    end
                     debugPos = {x, y}
                 end
             end

@@ -40,7 +40,7 @@ function Friendly.new(x, y, width, height)
 end
 
 function Friendly:think(dt)
-    self:processCmds()
+    self:processCmds(dt)
 end
 
 return Friendly

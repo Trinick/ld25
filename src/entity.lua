@@ -100,24 +100,46 @@ function Entity:clearCmds()
     self.cmds = {}
 end
 function Entity:popCmd(cmd)
-    if self.cmds[1] == cmd then
+    if self.cmds[1][1] == cmd then
         self.curCmd = nil
         table.remove(self.cmds, 1)
     end
 end
-function Entity:pushCmd(cmd)
-    table.insert(self.cmds, cmd)
+function Entity:pushCmd(cmd, args)
+    table.insert(self.cmds, {cmd, args})
 end
-function Entity:processCmds()
-    if # self.cmds > 0 and self.curCmd == nil then
+function Entity:processCmds(dt)
+    if # self.cmds > 0 then
         self.curCmd = self.cmds[1]
-        self.cmds[1](self)
+        self.cmds[1][1](self, dt, self.cmds[1][2])
     end
 end
 function Entity:stop()
 end
 function Entity:think(dt)
-    self:processCmds()
+    self:processCmds(dt)
+end
+
+function entityMoveTo(entity, dt, args)
+    local x = args[1]
+    local y = args[2]
+    local minDist = args[3]
+
+    local cx, cy = entity.collision:center()
+    local dx = x - cx
+    local dy = y - cy
+    local len = math.sqrt(math.pow(dx, 2) + math.pow(dy, 2))
+
+    if len <= minDist then
+        entity:popCmd(entityMoveTo)
+    else
+        dx = dx / len
+        dy = dy / len
+        entity.collision:move(dt * dx * entity.moveSpeed, dt * dy * entity.moveSpeed)
+        local x1, y1, x2, y2 = entity.collision:bbox()
+        entity.x = x1
+        entity.y = y1
+    end
 end
 
 function Entity:delete()
