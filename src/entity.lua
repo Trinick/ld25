@@ -3,7 +3,7 @@ Entity.__index = Entity
 
 drawLine = {}
 
-function Entity.new(x, y, width, height, world)
+function Entity.new(x, y, width, height, class)
     local inst = {}
 
     setmetatable(inst, Entity)
@@ -70,45 +70,6 @@ end
 
 function Entity:spawnEnemy()
     Enemy.new(self.x + 50, self.y, 32, 64, world)
-end
-
-function Entity:attack()
-    local ignoreSet = {[self.collision] = 1}
-    for i, entity in pairs(world.entities) do
-        if entity.className == nil then
-            table.insert(ignoreSet, entity)
-        elseif entity.className ~= "enemy" then
-            table.insert(ignoreSet, entity.collision)
-        end
-    end
-    local startX = self.x + (self.width/2)
-    local startY = self.y + (self.height/2)
-    local targetX = startX
-    local targetY = startY
-
-    if self.direction == 0 then
-        targetY = startY + 50
-    elseif self.direction == 1 then
-        targetY = startY - 50
-    elseif self.direction == 2 then
-        targetX = startX + 50
-    elseif self.direction == 3 then
-        targetX = startX - 50
-    end
-
-    local retSet = raycast(startX, startY, targetX, targetY, ignoreSet)
-    if #retSet == 0 then
-        return
-    end
-    for e, enemy in pairs(retSet) do
-        enemy = enemy.instance
-        if enemy ~= nil then
-            if enemy.className == "enemy" then
-                enemy.health = enemy.health - 10
-                if enemy.health < 0 then enemy:delete() end
-            end
-        end
-    end
 end
 
 function Entity:clearCmds()

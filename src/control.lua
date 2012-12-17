@@ -60,19 +60,17 @@ function Control:moveCheck(dt)
                 local x1, y1, x2, y2 = entity.collision:bbox() 
                 entity.x = x1
                 entity.y = y1
-            else
-                if ens ~= 0 or eew ~= 0 then
-                    entity.x = entity.x + eew
-                    entity.y = entity.y + ens
-                    entity.stepFrac = entity.stepFrac + (dt*4)
-                end
-
-                if ens == 0 and eew == 0 then
-                    entity.stepFrac = 0
-                    entity.step = 1
-                end
             end
-        end
+            if ens ~= 0 or eew ~= 0 then
+                entity.x = entity.x + eew
+                entity.y = entity.y + ens
+                entity.stepFrac = entity.stepFrac + (dt*4)
+            end
+
+            if ens == 0 and eew == 0 then
+                entity.stepFrac = 0
+                entity.step = 1
+            end end
         end
     end
 

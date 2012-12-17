@@ -24,6 +24,8 @@ function ClassMgr:initializeClass(id, name, width, height)
     local inst = {}
 
     inst.name = name
+    inst.width = width
+    inst.height = height
     inst.tileset = tileset
     inst.portrait = love.graphics.newImage("art/images/portrait_" .. id .. ".png")
     inst.down = {}
