@@ -105,8 +105,4 @@ function Friendly:attack()
     end
 end
 
-function Friendly:think(dt)
-    self:processCmds(dt)
-end
-
 return Friendly

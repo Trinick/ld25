@@ -92,7 +92,7 @@ end
 
 function Control:clear()
     for a, entity in pairs(self.selectedEntities) do
-        entity:pushCmd(entityPatrol, {true, 128, 18, 3})
+        self.isSelected = nil
     end
     self.selectedEntities = {}
     if self.controlling ~= nil then

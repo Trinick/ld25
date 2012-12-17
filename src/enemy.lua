@@ -95,8 +95,4 @@ function Enemy:attack()
     end
 end
 
-function Enemy:think(dt)
-    self:processCmds(dt)
-end
-
 return Enemy

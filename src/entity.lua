@@ -93,12 +93,146 @@ end
 function Entity:stop()
     self.step = 1
     self.stepFrac = 0
-    self.isPatrolling = false
-    self.patrolPos = nil
     self.waitTime = 0
     self.attackTimeout = 0
 end
 function Entity:think(dt)
+    if not self.isControlled and not self.isSelected then
+        if self.waitTime == nil then
+            self.waitTime = 0
+        end
+
+        local enemies = self:detectEnemies(320)
+        if # enemies > 0 then
+            entityMoveTo(self, dt, {enemies[1].instance.cx, enemies[1].instance.cy, 32})
+            entityAttack(self, dt, {enemies[1].instance})
+
+            self:stop()
+            self.movePos = nil
+
+            return
+        end
+
+        if # self.cmds == 0 then
+            if self.class == 1 then
+                local maxPatrolDist = 128
+                local maxWaitTime = 3
+                local patrolMinDist = 18
+
+                if self.waitTime > 0 then
+                    self.waitTime = self.waitTime - dt
+                else
+                    local x = 0
+                    local y = 0
+                    if self.movePos == nil then
+                        local range = maxPatrolDist * math.random()
+                        while true do
+                            local angle = math.random() * math.pi * 2
+                            x = range * math.cos(angle) + self.cx
+                            y = range * math.sin(angle) + self.cy
+                            if # raycast(self.cx, self.cy, x, y, nil, true, true) == 0 then
+                                self.movePos = {x, y}
+                                break
+                            end
+                        end
+                    else
+                        x = self.movePos[1]
+                        y = self.movePos[2]
+                    end
+
+                    local cx, cy = self.collision:center()
+                    local dx = x - cx
+                    local dy = y - cy
+                    local len = math.sqrt(math.pow(dx, 2) + math.pow(dy, 2))
+
+                    if len <= patrolMinDist then
+                        self:stop()
+                        self.waitTime = maxWaitTime * math.random()
+                    else
+                        dx = dx / len
+                        dy = dy / len
+
+                        if math.abs(dy) >= math.abs(dx) then
+                            if dy >= 0 then
+                                self.direction = 0
+                            else
+                                self.direction = 1
+                            end
+                        else
+                            if dx >= 0 then
+                                self.direction = 2
+                            else
+                                self.direction = 3
+                            end
+                        end
+
+                        self.stepFrac = self.stepFrac + dt * 4
+                        self.collision:move(dt * dx * self.moveSpeed, dt * dy * self.moveSpeed)
+                        local cx, cy = self.collision:center()
+                        self.cx = cx
+                        self.cy = cy
+                    end
+                end
+            end
+
+            if self.class == 2 then
+                local targetRoom = self.targetRoom
+
+                local x = 0
+                local y = 0
+
+                local dist = 0
+
+                if targetRoom == nil then
+                    while self.targetRoom == nil do
+                        targetRoom = world.rooms[math.random(1, # world.rooms)]
+
+                        x = (targetRoom.x + targetRoom.radius / 2) * 32
+                        y = (targetRoom.y + targetRoom.radius / 2) * 32
+
+                        dist = math.sqrt(math.pow(self.cx - x, 2) + math.pow(self.cy - y, 2))
+
+                        if dist > 640 then
+                            self.targetRoom = targetRoom
+                        end
+                    end
+                else
+                    x = (targetRoom.x + targetRoom.radius / 2) * 32
+                    y = (targetRoom.y + targetRoom.radius / 2) * 32
+
+                    dist = math.sqrt(math.pow(self.cx - x, 2) + math.pow(self.cy - y, 2))
+                end
+
+                if dist <= 32 then
+                    self.targetRoom = nil
+                    self.movePos = nil
+                end
+
+                if self.movePos == nil and self.targetRoom ~= nil then
+                    local path = getPath(self.cx, self.cy, x, y, {[self] = 1})
+                    if path == nil then
+                        self.targetRoom = nil
+                    elseif path == 0 then
+                        self.movePos = {x, y}
+                    elseif # path > 0 then
+                        self.movePos = {world.nodes[path[1]].x, world.nodes[path[1]].y}
+                    end
+                end
+
+                if self.movePos ~= nil then
+                    x = self.movePos[1]
+                    y = self.movePos[2]
+                    dist = math.sqrt(math.pow(self.cx - x, 2) + math.pow(self.cy - y, 2))
+                    if dist < 2 then
+                        self.movePos = nil
+                    else
+                        entityMoveTo(self, dt, {self.movePos[1], self.movePos[2], 2})
+                    end
+                end
+            end
+        end
+    end
+
     self:processCmds(dt)
 end
 function Entity:onHitWall()
@@ -211,142 +345,6 @@ function entityMoveTo(entity, dt, args)
         local cx, cy = entity.collision:center()
         entity.cx = cx
         entity.cy = cy
-    end
-end
-function entityPatrol(entity, dt, args)
-    local isPatrolling = args[1]
-    entity.isPatrolling = isPatrolling
-
-    if entity.waitTime == nil then
-        entity.waitTime = 0
-    end
-
-    if isPatrolling then
-        local enemies = entity:detectEnemies(320)
-        if # enemies > 0 then
-            entityMoveTo(entity, dt, {enemies[1].instance.cx, enemies[1].instance.cy, 32})
-            entityAttack(entity, dt, {enemies[1].instance})
-
-            if entity.class == 2 then
-                entity.movePos = nil
-            end
-
-            return
-        end
-
-        if entity.class == 1 then
-            if entity.waitTime > 0 then
-                entity.waitTime = entity.waitTime - dt
-            else
-                local x = 0
-                local y = 0
-                if entity.patrolPos == nil then
-                    local range = args[2] * math.random()
-                    while true do
-                        local angle = math.random() * math.pi * 2
-                        x = range * math.cos(angle) + entity.cx
-                        y = range * math.sin(angle) + entity.cy
-                        if # raycast(entity.cx, entity.cy, x, y, nil, true, true) == 0 then
-                            entity.patrolPos = {x, y}
-                            break
-                        end
-                    end
-                else
-                    x = entity.patrolPos[1]
-                    y = entity.patrolPos[2]
-                end
-
-                local minDist = args[3]
-                local cx, cy = entity.collision:center()
-                local dx = x - cx
-                local dy = y - cy
-                local len = math.sqrt(math.pow(dx, 2) + math.pow(dy, 2))
-
-                if len <= minDist then
-                    entity:stop()
-                    entity.waitTime = args[4] * math.random()
-                else
-                    dx = dx / len
-                    dy = dy / len
-
-                    if math.abs(dy) >= math.abs(dx) then
-                        if dy >= 0 then
-                            entity.direction = 0
-                        else
-                            entity.direction = 1
-                        end
-                    else
-                        if dx >= 0 then
-                            entity.direction = 2
-                        else
-                            entity.direction = 3
-                        end
-                    end
-
-                    entity.stepFrac = entity.stepFrac + dt * 4
-                    entity.collision:move(dt * dx * entity.moveSpeed, dt * dy * entity.moveSpeed)
-                    local cx, cy = entity.collision:center()
-                    entity.cx = cx
-                    entity.cy = cy
-                end
-            end
-        end
-
-        if entity.class == 2 then
-            local targetRoom = entity.targetRoom
-
-            local x = 0
-            local y = 0
-
-            local dist = 0
-
-            if targetRoom == nil then
-                while entity.targetRoom == nil do
-                    targetRoom = world.rooms[math.random(1, # world.rooms)]
-
-                    x = (targetRoom.x + targetRoom.radius / 2) * 32
-                    y = (targetRoom.y + targetRoom.radius / 2) * 32
-
-                    dist = math.sqrt(math.pow(entity.cx - x, 2) + math.pow(entity.cy - y, 2))
-
-                    if dist > 640 then
-                        entity.targetRoom = targetRoom
-                    end
-                end
-            else
-                x = (targetRoom.x + targetRoom.radius / 2) * 32
-                y = (targetRoom.y + targetRoom.radius / 2) * 32
-
-                dist = math.sqrt(math.pow(entity.cx - x, 2) + math.pow(entity.cy - y, 2))
-            end
-
-            if dist <= 32 then
-                entity.targetRoom = nil
-                entity.movePos = nil
-            end
-
-            if entity.movePos == nil and entity.targetRoom ~= nil then
-                local path = getPath(entity.cx, entity.cy, x, y, {[entity] = 1})
-                if path == nil then
-                    entity.targetRoom = nil
-                elseif path == 0 then
-                    entity.movePos = {x, y}
-                elseif # path > 0 then
-                    entity.movePos = {world.nodes[path[1]].x, world.nodes[path[1]].y}
-                end
-            end
-
-            if entity.movePos ~= nil then
-                x = entity.movePos[1]
-                y = entity.movePos[2]
-                dist = math.sqrt(math.pow(entity.cx - x, 2) + math.pow(entity.cy - y, 2))
-                if dist < 2 then
-                    entity.movePos = nil
-                else
-                    entityMoveTo(entity, dt, {entity.movePos[1], entity.movePos[2], 2})
-                end
-            end
-        end
     end
 end
 

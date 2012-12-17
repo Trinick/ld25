@@ -32,11 +32,10 @@ function WaveMgr:update(dt)
 				class = "HeroKnight"
 			end
 
-			local enemy = Enemy.new(spawn.x * 32, spawn.y * 32, class)
+			Enemy.new(spawn.x * 32, spawn.y * 32, class)
 
 			self.dispatched = self.dispatched + 1
 
-			enemy:pushCmd(entityPatrol, {true, 128, 18, 3})
 			print("Dispatched " .. self.dispatched .. "/" .. self.total)
 		end
 
