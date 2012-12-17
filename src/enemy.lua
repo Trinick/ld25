@@ -16,6 +16,7 @@ function Enemy.new(x, y, width, height, world)
     inst.height = height
     inst.direction = 0
     inst.canBeControlled = false
+    inst.cmds = {}
 
     inst.moveSpeed = 5
 
@@ -23,6 +24,7 @@ function Enemy.new(x, y, width, height, world)
 end
 
 function Enemy:think(dt)
+    self:processCmds()
 end
 
 return Enemy

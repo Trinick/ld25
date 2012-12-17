@@ -21,6 +21,7 @@ function Friendly.new(x, y, width, height)
     inst.flipped = {false, false, false}
     inst.canBeControlled = true
     inst.isControlled = false
+    inst.cmds = {}
 
     inst.moveSpeed = 64
 
@@ -36,6 +37,7 @@ function Friendly.new(x, y, width, height)
 end
 
 function Friendly:think(dt)
+    self:processCmds()
 end
 
 return Friendly

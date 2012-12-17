@@ -13,6 +13,8 @@ function Entity.new(x, y, width, height, world)
     inst.width = width
     inst.height = height
     inst.direction = 0
+    inst.canBeControlled = false
+    inst.cmds = {}
 
     return inst
 end
@@ -90,7 +92,23 @@ function Entity:attack()
     end
 end
 
+function Entity:popCmd(cmd)
+    if self.cmds[1] == cmd then
+        self.curCmd = nil
+        table.remove(self.cmds, 1)
+    end
+end
+function Entity:pushCmd(cmd)
+    table.insert(self.cmds, cmd)
+end
+function Entity:processCmds()
+    if # self.cmds > 0 and self.curCmd == nil then
+        self.curCmd = self.cmds[1]
+        self.cmds[1](self)
+    end
+end
 function Entity:think(dt)
+    self:processCmds()
 end
 
 return Entity
