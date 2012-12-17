@@ -10,7 +10,6 @@ function Friendly.new(x, y, class)
     inst.className = "friendly"
     inst.class = 0x01
     local entityClass = classMgr.classes[1]
-    print(type(class))
     if type(class) == "string" then
         local classNum = 1
         for i=1, #classMgr.classes, 1 do
@@ -21,7 +20,6 @@ function Friendly.new(x, y, class)
         end
         entityClass = classMgr.classes[classNum]
     else
-        print(class)
         entityClass = classMgr.classes[class]
     end
 
