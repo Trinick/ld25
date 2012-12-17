@@ -194,8 +194,11 @@ function World:place()
         wall = tile(4, 1),
         wallLeft = tile(4, 0),
         wallRight = tile(4, 2),
-        roof = tile(5, 3),
+        roof = tile(4, 3),
         floor = tile(0, 1),
+        floorBroken1 = tile(0, 6),
+        floorBroken2 = tile(0, 7),
+        floorBroken3 = tile(0, 8),
         rock1 = tile(0, 2),
         rock2 = tile(0, 3),
         rock3 = tile(0, 4),
@@ -336,11 +339,15 @@ function World:place()
                     elseif dirtyNorthEast then
                         tilesBatch:addq(tilesetQuads.dirtBottomLeft, x * 32, y * 32)
                     else
-                        tilesBatch:addq(tilesetQuads.floor, x * 32, y * 32)
+                        if lcg:random() >= 0.993 then
+                            tilesBatch:addq(tilesetQuads["floorBroken" .. math.ceil(lcg:random() * 3)], x * 32, y * 32)
+                        else
+                            tilesBatch:addq(tilesetQuads.floor, x * 32, y * 32)
+                        end
                     end
                 end
 
-                if lcg:random() >= 0.992 then
+                if lcg:random() >= 0.993 then
                     tilesBatch:addq(tilesetQuads["rock" .. math.ceil(lcg:random() * 3)], x * 32, y * 32)
                 end
             else
