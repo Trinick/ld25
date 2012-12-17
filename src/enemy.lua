@@ -37,7 +37,7 @@ function Enemy.new(x, y, class)
     inst.step = 1
     inst.stepFrac = 0
     inst.flipped = {false, false, false}
-    inst.canBeControlled = true
+    inst.canBeControlled = false
     inst.cmds = {}
     inst.color = {255, 255, 255}
 
