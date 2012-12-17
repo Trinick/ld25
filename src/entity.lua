@@ -165,6 +165,10 @@ function Entity:delete()
         end
     end
 
+    if self.collision ~= nil then
+        collider:remove(self.collision)
+    end
+
     if self.class == 1 then
         for a, entity in pairs(world.friendlies) do
             if entity == self then
@@ -177,6 +181,14 @@ function Entity:delete()
         for a, entity in pairs(world.enemies) do
             if entity == self then
                 table.remove(world.enemies, a)
+            end
+        end
+    end
+
+    if self.isControlled then
+        for a, entity in pairs(self.controlling) do
+            if entity == self then
+                table.remove(self.controlling, a)
             end
         end
     end
