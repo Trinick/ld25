@@ -91,11 +91,15 @@ function Control:moveCheck(dt)
 end
 
 function Control:clear()
-    if self.controlling == nil then
-        return
+    for a, entity in pairs(self.selectedEntities) do
+        entity:pushCmd(entityPatrol, {true, 128, 18, 3})
     end
-    self.controlling.isControlled = false
-    self.controlling = nil
+    self.selectedEntities = {}
+    if self.controlling ~= nil then
+        self.controlling:pushCmd(entityPatrol, {true, 128, 18, 3})
+        self.controlling.isControlled = false
+        self.controlling = nil
+    end
 end
 
 function Control:update(dt)
@@ -192,8 +196,6 @@ function Control:onMouseDown(x, y, button)
 
     if button == "l" then
         self:clear()
-        self.controlling = nil
-        self.selectedEntities = {}
         self.selectBox.exists = true
         self.selectBox.originX = x
         self.selectBox.originY = y

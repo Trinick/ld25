@@ -8,19 +8,19 @@ function ClassMgr.new()
 
     inst.classes = {}
 
-    inst:initializeClass("spider", "Spider", 64, 64, 100, 96, 15, 30, 30, -32, -32)
-    inst:initializeClass("skeleton", "Skeleton", 32, 64, 200, 48, 10, 30, 30, -16, -48)
-    inst:initializeClass("ghost", "Ghost", 32, 64, 150, 80, 10, 30, 30, -16, -48)
-    inst:initializeClass("slime", "Slime", 24, 32, 10, 32, 25, 24, 24, -12, -16)
-    inst:initializeClass("bat", "Bat", 64, 32, 50, 96, 8, 32, 16, -32, -16)
+    inst:initializeClass("spider", "Spider", 64, 64, 100, 96, 15, 30, 30, -32, -32, 1)
+    inst:initializeClass("skeleton", "Skeleton", 32, 64, 200, 48, 10, 30, 30, -16, -48, 1)
+    inst:initializeClass("ghost", "Ghost", 32, 64, 150, 80, 10, 30, 30, -16, -48, 1)
+    inst:initializeClass("slime", "Slime", 24, 32, 10, 32, 25, 24, 24, -12, -16, 1)
+    inst:initializeClass("bat", "Bat", 64, 32, 50, 96, 8, 32, 16, -32, -16, 1)
 
-    inst:initializeClass("hero_knight", "HeroKnight", 64, 64, 100, 64, 10, 30, 30, -32, -48)
-    inst:initializeClass("hero_templar","HeroTemplar", 64, 64, 200, 48, 15, 30, 30, -32, -48)
+    inst:initializeClass("hero_knight", "HeroKnight", 64, 64, 100, 64, 10, 30, 30, -32, -48, 0.5)
+    inst:initializeClass("hero_templar","HeroTemplar", 64, 64, 200, 48, 15, 30, 30, -32, -48, 0.5)
 
     return inst
 end
 
-function ClassMgr:initializeClass(id, name, width, height, health, speed, damage, colWidth, colHeight, offsetX, offsetY)
+function ClassMgr:initializeClass(id, name, width, height, health, speed, damage, colWidth, colHeight, offsetX, offsetY, attackTimeout)
     local tileset = love.graphics.newImage("art/images/" .. id .. ".png")
     local inst = {}
 
@@ -41,6 +41,7 @@ function ClassMgr:initializeClass(id, name, width, height, health, speed, damage
     inst.colHeight = colHeight
     inst.offsetX = offsetX
     inst.offsetY = offsetY
+    inst.attackTimeout = attackTimeout
 
     local list = {inst.down, inst.up, inst.left, inst.right}
 

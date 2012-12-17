@@ -96,6 +96,7 @@ function Entity:stop()
     self.isPatrolling = false
     self.patrolPos = nil
     self.waitTime = 0
+    self.attackTimeout = 0
 end
 function Entity:think(dt)
     self:processCmds(dt)
@@ -130,6 +131,41 @@ function Entity:detectEnemies(range)
     return enemies
 end
 
+function entityAttack(entity, dt, args)
+    local target = args[1]
+
+    if entity.lastAttack == nil then
+        entity.lastAttack = 0
+    end
+
+    if entity.lastAttack >= entity.entityClass.attackTimeout then
+        entity.lastAttack = 0
+    end
+
+    if entity.attackTimeout == 0 then
+        local dist = math.sqrt(math.pow(entity.cx - target.cx, 2) + math.pow(entity.cy - target.cy, 2))
+        if dist <= 48 then
+            if target.damageblinkend == nil then
+                target.damageblinkend = 0.10
+                target.oldcolor = target.color
+                target.color = {255, 96, 96}
+            end
+            target.health = target.health - entity.damage
+            if target.health < 0 then
+                target:delete()
+                world.audioMgr:playSound("die")
+                if # entity.cmds > 0  then
+                    entity:stop()
+                    entity:popCmd(entityAttack)
+                end
+            else
+                world.audioMgr:playSound("hit")
+            end
+        end
+    end
+
+    entity.lastAttack = entity.lastAttack + dt
+end
 function entityMoveTo(entity, dt, args)
     local x = args[1]
     local y = args[2]
@@ -140,7 +176,7 @@ function entityMoveTo(entity, dt, args)
     local dy = y - cy
     local len = math.sqrt(math.pow(dx, 2) + math.pow(dy, 2))
 
-    if #entity.cmds > 0 and len <= minDist then
+    if # entity.cmds > 0 and len <= minDist then
         entity:stop()
         entity:popCmd(entityMoveTo)
     else
@@ -181,6 +217,7 @@ function entityPatrol(entity, dt, args)
         local enemies = entity:detectEnemies(320)
         if # enemies > 0 then
             entityMoveTo(entity, dt, {enemies[1].instance.cx, enemies[1].instance.cy, 32})
+            entityAttack(entity, dt, {enemies[1].instance})
             return
         end
 
