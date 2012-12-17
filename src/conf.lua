@@ -1,5 +1,5 @@
 function love.conf(t)
-    t.title = "LD25"
+    t.title = "Phaedra"
     t.author = "Centhra"
     t.url = "http://github.com/centhra/ld25"
     t.identity = nil
