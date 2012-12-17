@@ -186,12 +186,12 @@ function Control:onMouseDown(x, y, button)
                     debugPath = getPath(x, y, self.controlling[1].cx, self.controlling[1].cy, {[self.controlling[1].collision] = 1})
                     if debugPath == nil then
                     elseif debugPath == 0 then
-                        self.controlling[1]:pushCmd(entityMoveTo, {x, y, 4})
+                        self.controlling[1]:pushCmd(entityMoveTo, {x, y, 2})
                     elseif # debugPath > 0 then
                         for a, node in pairs(debugPath) do
-                            self.controlling[1]:pushCmd(entityMoveTo, {world.nodes[node].x, world.nodes[node].y, 4})
+                            self.controlling[1]:pushCmd(entityMoveTo, {world.nodes[node].x, world.nodes[node].y, 2})
                         end
-                        self.controlling[1]:pushCmd(entityMoveTo, {x, y, 4})
+                        self.controlling[1]:pushCmd(entityMoveTo, {x, y, 2})
                     end
                     debugPos = {x, y}
                 end
