@@ -121,14 +121,22 @@ function Entity:detectEnemies(range)
     local maxY = cy + rangeBy2
 
     local enemies = boxCheck(minX, minY, maxX, maxY, self.class % 2 + 1)
+
+    local returnSet = {}
+    for a, enemy in pairs(enemies) do
+        if # raycast(cx, cy, enemy.instance.cx, enemy.instance.cy, nil, true, true) == 0 then
+            table.insert(returnSet, enemy)
+        end
+    end
+
     function minDist(a, b)
         local acx, acy = a:center()
         local bcx, bcy = b:center()
         return (math.pow(cx - acx, 2) + math.pow(cy - acy, 2)) < (math.pow(cx - bcx, 2) + math.pow(cy - bcy, 2))
     end
-    table.sort(enemies, minDist)
+    table.sort(returnSet, minDist)
 
-    return enemies
+    return returnSet
 end
 
 function entityAttack(entity, dt, args)
