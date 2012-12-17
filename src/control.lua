@@ -71,20 +71,28 @@ function Control:moveCheck(dt)
         end
     end
 
-    wns = 0
-    wew = 0
+    local wns = 0
+    local wew = 0
+
+    local multiplier
+
+    if love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift") then
+        multiplier = 2
+    else
+        multiplier = 1
+    end
 
     if(love.keyboard.isDown("up")) then
-        wns = 256 * dt
+        wns = 384 * dt * multiplier
     end
     if(love.keyboard.isDown("right")) then
-        wew = 256 * -dt
+        wew = 384 * -dt * multiplier
     end
     if(love.keyboard.isDown("down")) then
-         wns = 256 * -dt
+         wns = 384 * -dt * multiplier
     end
     if(love.keyboard.isDown("left")) then
-        wew = 256 * dt
+        wew = 384 * dt * multiplier
     end
 
     world.cameraX = world.cameraX + wew
