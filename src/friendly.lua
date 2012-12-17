@@ -90,7 +90,12 @@ function Friendly:attack()
                 enemy.oldcolor = enemy.color
                 enemy.color = {255, 96, 96}
                 enemy.health = enemy.health - self.damage
-                if enemy.health < 0 then enemy:delete() end
+                if enemy.health < 0 then
+                    enemy:delete()
+                    world.soundCtlr.playSound("die")
+                else
+                    world.soundCtlr.playSound("hit")
+                end
             end
         end
     end

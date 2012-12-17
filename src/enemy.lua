@@ -85,12 +85,17 @@ function Enemy:attack()
     for e, enemy in pairs(retSet) do
         enemy = enemy.instance
         if enemy ~= nil then
-            if enemy.className == "friendly" then
+            if enemy.className == "enemy" then
                 enemy.damageblinkend = 0.10
                 enemy.oldcolor = enemy.color
                 enemy.color = {255, 96, 96}
                 enemy.health = enemy.health - self.damage
-                if enemy.health < 0 then enemy:delete() end
+                if enemy.health < 0 then
+                    enemy:delete()
+                    world.soundCtlr.playSound("die")
+                else
+                    world.soundCtlr.playSound("hit")
+                end
             end
         end
     end
