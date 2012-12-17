@@ -150,7 +150,7 @@ function entityAttack(entity, dt, args)
         entity.lastAttack = 0
     end
 
-    if entity.attackTimeout == 0 then
+    if entity.lastAttack == 0 then
         local dist = math.sqrt(math.pow(entity.cx - target.cx, 2) + math.pow(entity.cy - target.cy, 2))
         if dist <= 48 then
             if target.damageblinkend == nil then
