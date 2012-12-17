@@ -92,9 +92,9 @@ function Friendly:attack()
                 enemy.health = enemy.health - self.damage
                 if enemy.health < 0 then
                     enemy:delete()
-                    world.soundCtlr.playSound("die")
+                    world.audioCtlr.playSound("die")
                 else
-                    world.soundCtlr.playSound("hit")
+                    world.audioCtlr.playSound("hit")
                 end
             end
         end
