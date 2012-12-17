@@ -72,7 +72,7 @@ function Entity:clientCheck(x, y)
 end
 
 function Entity:spawnEnemy()
-    Enemy.new(self.x + 50, self.y, 32, 64, world)
+    Enemy.new(self.cx + 50, self.cy, 32, 64, world)
 end
 
 function Entity:clearCmds()
@@ -115,10 +115,25 @@ function entityMoveTo(entity, dt, args)
     else
         dx = dx / len
         dy = dy / len
+
+        if math.abs(dy) >= math.abs(dx) then
+            if dy >= 0 then
+                entity.direction = 0
+            else
+                entity.direction = 1
+            end
+        else
+            if dx >= 0 then
+                entity.direction = 2
+            else
+                entity.direction = 3
+            end
+        end
+
         entity.collision:move(dt * dx * entity.moveSpeed, dt * dy * entity.moveSpeed)
-        local x1, y1, x2, y2 = entity.collision:bbox()
-        entity.x = x1
-        entity.y = y1
+        local cx, cy = entity.collision:center()
+        entity.cx = cx
+        entity.cy = cy
     end
 end
 
