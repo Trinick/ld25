@@ -25,6 +25,29 @@ end
 function onCollisionStop(dt, shape_a, shape_b)
 end
 
+function boxCheck(startX, startY, endX, endY, class, ignoreSet)
+    if ignoreSet == nil then
+        ignoreSet = {}
+    end
+
+    local isFound = {}
+    local found = {}
+
+    for shape in pairs(collider:shapesInRange(startX, startY, endX, endY)) do
+        if shape.instance ~= nil then
+            if ignoreSet[shape] == nil and isFound[shape] == nil and (shape.instance.class == class or class == nil) then
+                local x1, y1, x2, y2 = shape:bbox()
+                if x1 < endX and y1 < endY and x2 > startX and y2 > startY then
+                    isFound[shape] = 1
+                    table.insert(found, shape)
+                end
+            end
+        end
+    end
+
+    return found
+end
+
 function raycast(startX, startY, endX, endY, ignoreSet, retFirst, wallsOnly)
     local rayX = startX
     local rayY = startY

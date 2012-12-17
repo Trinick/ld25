@@ -110,6 +110,25 @@ function Entity:onHitEntity(entity)
         self:stop()
     end
 end
+function Entity:detectEnemies(range)
+    local rangeBy2 = range / 2
+    local cx = self.cx
+    local cy = self.cy
+    local minX = cx - rangeBy2
+    local minY = cy - rangeBy2
+    local maxX = cx + rangeBy2
+    local maxY = cy + rangeBy2
+
+    local enemies = boxCheck(minX, minY, maxX, maxY, self.class % 2 + 1)
+    function minDist(a, b)
+        local acx, acy = a:center()
+        local bcx, bcy = b:center()
+        return (math.pow(cx - acx, 2) + math.pow(cy - acy, 2)) < (math.pow(cx - bcx, 2) + math.pow(cy - bcy, 2))
+    end
+    table.sort(enemies, minDist)
+
+    return enemies
+end
 
 function entityMoveTo(entity, dt, args)
     local x = args[1]
@@ -159,6 +178,12 @@ function entityPatrol(entity, dt, args)
     end
 
     if isPatrolling then
+        local enemies = entity:detectEnemies(320)
+        if # enemies > 0 then
+            entityMoveTo(entity, dt, {enemies[1].instance.cx, enemies[1].instance.cy, 32})
+            return
+        end
+
         if entity.waitTime > 0 then
             entity.waitTime = entity.waitTime - dt
         else
