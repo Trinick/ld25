@@ -12,6 +12,7 @@ function ClassMgr.new()
     inst:initializeClass("skeleton", "Skeleton", 32, 64, 200, 48, 10, 30, 30, -16, -48)
     inst:initializeClass("ghost", "Ghost", 32, 64, 150, 80, 10, 30, 30, -16, -48)
     inst:initializeClass("slime", "Slime", 24, 32, 10, 32, 25, 24, 24, -12, -16)
+    inst:initializeClass("bat", "Bat", 64, 32, 50, 96, 8, 32, 16, -32, -16)
 
     inst:initializeClass("hero_knight", "HeroKnight", 64, 64, 100, 64, 10, 30, 30, -32, -48)
     inst:initializeClass("hero_templar","HeroTemplar", 64, 64, 200, 48, 15, 30, 30, -32, -48)

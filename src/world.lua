@@ -524,7 +524,7 @@ function World:populate()
     for room=2, #self.rooms, 1 do
         x = self.rooms[room].x
         y = self.rooms[room].y
-        Friendly.new(x * 32 + 16, y * 32 + 16, (math.floor(world.lcg:random()*10)%4)+1)
+        Friendly.new(x * 32 + 16, y * 32 + 16, (math.floor(world.lcg:random()*10)%5)+1)
     end
 
     for i=0,#self.rooms/4,1 do
