@@ -379,7 +379,7 @@ function World:finalize()
     for a, nodeA in pairs(nodes) do
         for b, nodeB in pairs(nodes) do
             if a ~= b and checked[a][b] == nil then
-                if # raycast(nodeA.x, nodeA.y, nodeB.x, nodeB.y) == 0 then
+                if # raycast(nodeA.x, nodeA.y, nodeB.x, nodeB.y, nil, true) == 0 then
                     checked[a][b] = 1
                     checked[b][a] = 1
                     table.insert(nodeA.neighbors, b)

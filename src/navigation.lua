@@ -7,7 +7,7 @@ function comparePath(a, b)
 end
 
 function getPath(startX, startY, targetX, targetY, ignoreSet)
-    if # raycast(startX, startY, targetX, targetY, ignoreSet) == 0 then
+    if # raycast(startX, startY, targetX, targetY, ignoreSet, nil, true, true) == 0 then
         return 0
     end
 
@@ -18,7 +18,7 @@ function getPath(startX, startY, targetX, targetY, ignoreSet)
     local gScore = {}
 
     for a, node in pairs(world.nodes) do
-        if # raycast(startX, startY, node.x, node.y, ignoreSet) == 0 then
+        if # raycast(startX, startY, node.x, node.y, ignoreSet, nil, true, true) == 0 then
             gScore[a] = dist(node.x, node.y, startX, startY)
             local data = {a, gScore[a] + dist(node.x, node.y, targetX, targetY)}
             table.insert(openSet, data)
@@ -28,7 +28,7 @@ function getPath(startX, startY, targetX, targetY, ignoreSet)
     
     local inTargetSet = {}
     for a, node in pairs(world.nodes) do
-        if # raycast(targetX, targetY, node.x, node.y, ignoreSet) == 0 then
+        if # raycast(targetX, targetY, node.x, node.y, ignoreSet, nil, true, true) == 0 then
             inTargetSet[a] = 1
         end
     end

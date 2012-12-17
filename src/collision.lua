@@ -19,7 +19,7 @@ end
 function onCollisionStop(dt, shape_a, shape_b)
 end
 
-function raycast(startX, startY, endX, endY, ignoreSet, retFirst)
+function raycast(startX, startY, endX, endY, ignoreSet, retFirst, wallsOnly)
     local rayX = startX
     local rayY = startY
     local width = endX - startX
@@ -41,8 +41,12 @@ function raycast(startX, startY, endX, endY, ignoreSet, retFirst)
         ignoreSet = {}
     end
 
+    if wallsOnly == nil then
+        wallsOnly = false
+    end
+
     if retFirst == nil then
-        retFirst = true
+        retFirst = false
     end
 
     local isFound = {}
@@ -52,13 +56,15 @@ function raycast(startX, startY, endX, endY, ignoreSet, retFirst)
         local x1, y1, x2, y2 = shape:bbox()
         if x1 < endX and y1 < endY and x2 > startX and y2 > startY then
             if ignoreSet[shape] == nil and isFound[shape] == nil then
-                local intersecting, t = shape:intersectsRay(rayX, rayY, dx, dy)
-                if intersecting then
-                    if retFirst then
-                        return {shape}
+                if (wallsOnly and shape.isWall) or not wallsOnly then
+                    local intersecting, t = shape:intersectsRay(rayX, rayY, dx, dy)
+                    if intersecting then
+                        if retFirst then
+                            return {shape}
+                        end
+                        isFound[shape] = 1
+                        table.insert(found, shape)
                     end
-                    isFound[shape] = 1
-                    table.insert(found, shape)
                 end
             end
         end
