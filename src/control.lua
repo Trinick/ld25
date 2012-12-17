@@ -92,7 +92,7 @@ end
 
 function Control:clear()
     for a, entity in pairs(self.selectedEntities) do
-        self.isSelected = nil
+        entity.isSelected = nil
     end
     self.selectedEntities = {}
     if self.controlling ~= nil then

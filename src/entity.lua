@@ -107,6 +107,7 @@ function Entity:think(dt)
             entityMoveTo(self, dt, {enemies[1].instance.cx, enemies[1].instance.cy, 32})
             entityAttack(self, dt, {enemies[1].instance})
 
+            self:clearCmds()
             self:stop()
             self.movePos = nil
 
