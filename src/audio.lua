@@ -41,7 +41,8 @@ end
 
 --- Prepare all music for streaming from disk, but don't play any of it.
 function AudioCtl:loadAllSongs()
-    self:loadSong("derpy", "easy_dungeon", "art/sounds/derpybgm.ogg", 1.0);
+    self:loadSong("derpy", "easy_dungeon", "art/sounds/derpybgm.ogg", 1.0)
+    self:loadSong("quick", "easy_dungeon", "art/sounds/easy_quicksong.ogg", 1.0)
 end
 
 --- Load a sound effect NAME from location PATH with volume VOL.
