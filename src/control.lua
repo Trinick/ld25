@@ -28,13 +28,13 @@ function Control:moveCheck(dt)
                 ens = entity.moveSpeed * -dt
                 entity.direction = 1
             end
-            if d then
-                eew = entity.moveSpeed * dt
-                entity.direction = 2
-            end
             if s then
                 ens = entity.moveSpeed * dt
                 entity.direction = 0
+            end
+            if d then
+                eew = entity.moveSpeed * dt
+                entity.direction = 2
             end
             if a then
                 eew = entity.moveSpeed * -dt
