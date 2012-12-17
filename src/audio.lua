@@ -37,6 +37,8 @@ end
 --- Load all sound effects (not music) into this object.
 function AudioCtl:loadAllSfx()
     self:loadEffect("pop", "art/sounds/pop.wav", 1.0)
+    self:loadEffect("hit", "art/sounds/hitsound.wav", 1.0)
+    self:loadEffect("die", "art/sounds/die.wav", 1.0)
 end
 
 --- Prepare all music for streaming from disk, but don't play any of it.
