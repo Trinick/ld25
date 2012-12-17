@@ -124,8 +124,6 @@ function Control:update(dt)
         if x > mapX and x < mapX + mapWidth and y > mapY and y < mapY + mapHeight then
             world.cameraX = (x - mapX) * -32
             world.cameraY = (y - mapY) * -32
-
-            return 
         end
     end
 
@@ -151,13 +149,20 @@ function Control:onMouseDown(x, y, button)
 
     local width = love.graphics.getWidth()
     local height = love.graphics.getHeight()
+    local mapX = width - gui.map:getWidth() + 56
+    local mapY = 36
+    local mapWidth = world.width
+    local mapHeight = world.height
+
+    if x > mapX and x < mapX + mapWidth and y > mapY and y < mapY + mapHeight then
+        return
+    end
 
     x = x - world.cameraX - width / 2
     y = y - world.cameraY - height / 2
 
     if button == "l" then
         self.controlling = {}
-
         for i, entity in pairs(world.entities) do
             if entity.canBeControlled then
                 if entity:collisionCheck(x, y) == 1 then
