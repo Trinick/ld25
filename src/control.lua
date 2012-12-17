@@ -96,7 +96,6 @@ function Control:clear()
     end
     self.selectedEntities = {}
     if self.controlling ~= nil then
-        self.controlling:pushCmd(entityPatrol, {true, 128, 18, 3})
         self.controlling.isControlled = false
         self.controlling = nil
     end
