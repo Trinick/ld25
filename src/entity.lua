@@ -378,9 +378,14 @@ function Entity:delete()
     end
 
     if self.isControlled then
-        for a, entity in pairs(control.controlling) do
+        control.controlling = nil
+    end
+
+    if self.isSelected then
+        for a, entity in pairs(control.selectedEntities) do
             if entity == self then
-                table.remove(control.controlling, a)
+                table.remove(control, a)
+                break
             end
         end
     end
