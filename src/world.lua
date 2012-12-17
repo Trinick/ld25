@@ -59,6 +59,17 @@ function World.new(seed)
 
                 room = { x = x, y = y, size = size, radius = radius}
 
+<<<<<<< HEAD
+=======
+                if i == 0 then
+                    inst.player = Friendly.new(x * 32, y * 64, 32, 64)
+                    inst.cameraX = -x * 32
+                    inst.cameraY = -y * 32
+
+                    table.insert(inst.entities, inst.player)
+                end
+
+>>>>>>> Fixed sprite size thing
                 local kx = x - radius
                 local ky = y - radius
 
