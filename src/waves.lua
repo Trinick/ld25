@@ -26,7 +26,7 @@ function WaveMgr:update(dt)
 		if math.floor(self.dispatchStep) > old then
 			local class
 
-			if world.lcg:random() >= 0.6 then
+			if world.lcg:random() >= 0.75 then
 				class = "HeroTemplar"
 			else
 				class = "HeroKnight"
@@ -48,11 +48,12 @@ function WaveMgr:update(dt)
 			if self.dispatched >= self.total then
 				print("win")
 			else
-				local spawn = self.spawns[math.ceil(world.lcg:random() * #self.spawns)]
+				local spawn = self.spawns[1]
 
 				self.dispatchStep = 0
 				self.dispatching = spawn
 
+				table.remove(self.spawns, 1)
 				gui:notifyWave(spawn.x, spawn.y)
 			end
 		end

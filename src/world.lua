@@ -540,9 +540,9 @@ function World:populate()
         end
     end
 
-    repeat
-        table.insert(heroSpawns, self.rooms[math.ceil(lcg:random() * #self.rooms)])
-    until #heroSpawns >= heroSpawnCount
+    for i = 1, heroSpawnCount do
+        table.insert(heroSpawns, self.rooms[i])
+    end
 
     self.waveMgr = WaveMgr.new(mobs, heroSpawns)
     self.cameraX = -self.rooms[1].x * 32
