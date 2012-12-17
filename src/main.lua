@@ -6,7 +6,8 @@ GUI = require "gui"
 require "navigation"
 
 tips = {
-    "PROTIP: You're not a villain unless your minions die for you."
+    "PROTIP: You're not a villain unless your minions die for you.",
+    "PROTIP: Having unsafe sex can result in STIs."
 }
 
 function love.load()
