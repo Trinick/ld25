@@ -13,7 +13,7 @@ function World.new(seed)
     setmetatable(inst, World)
 
     inst.audioCtlr = AudioCtl.new()
-    inst.audioCtlr:playSong("derpy")
+    inst.audioCtlr:playFromTheme("easy_dungeon")
     inst.entities = {}
     inst.friendlies = {}
     inst.enemies = {}
@@ -102,8 +102,6 @@ function World:dig()
                     local nextRadius = next.radius
                     local targets
 
-                    -- Possibly choose
-
                     if lcg:random() >= 0.5 then
                         targets = {{
                             x = x,
@@ -165,6 +163,22 @@ function World:dig()
             end
         end
     end
+
+    -- Pruning
+
+    for x = 0, width do
+        for y = 0, height do
+            local north = not self:getTile(x, y - 1)
+            local south = not self:getTile(x, y + 1)
+            local east = not self:getTile(x + 1, y)
+            local west = not self:getTile(x - 1, y)
+
+            if (not south and not north) or (not east and not west) then
+                -- Clear 1x walls cause they look shit
+                self:setTile(x, y, true)
+            end
+        end
+    end
 end
 
 function World:place()
@@ -184,11 +198,26 @@ function World:place()
         floor = tile(0, 1),
         rock1 = tile(0, 2),
         rock2 = tile(0, 3),
-        rock3 = tile(0, 4)
+        rock3 = tile(0, 4),
+        dirt = tile(2, 1),
+        dirtTopLeft = tile(1, 0),
+        dirtTop = tile(2, 0),
+        dirtTopRight = tile(3, 0),
+        dirtLeft = tile(1, 1),
+        dirtRight = tile(3, 1),
+        dirtBottomLeft = tile(1, 2),
+        dirtBottom = tile(2, 2),
+        dirtBottomRight = tile(3, 2),
+        dirtMiddle = tile(4, 3),
+        dirtTopLeftInverted = tile(1, 3),
+        dirtTopRightInverted = tile(3, 3),
+        dirtBottomLeftInverted = tile(1, 4),
+        dirtBottomRightInverted = tile(3, 4)
     }
     local tilesBatch = love.graphics.newSpriteBatch(tileset, width * self.height)
     local walls = {}
     local dirt = {}
+    local patchCount = math.ceil(lcg:random() * 20)
 
     function setDirt(x, y)
         dirt[x .. "_" .. y] = true
@@ -204,6 +233,35 @@ function World:place()
 
     function isWall(x, y)
         return walls[x .. "_" .. y] == true
+    end
+
+    for i = 0, patchCount do
+        local x, y
+
+        repeat
+            x = math.floor(lcg:random() * width)
+            y = math.floor(lcg:random() * height)
+        until self:getTile(x, y)
+
+        repeat
+            setDirt(x, y, true)
+
+            local dir = math.floor(lcg:random() * 4)
+            local north = not self:getTile(x, y - 1)
+            local south = not self:getTile(x, y + 1)
+            local east = not self:getTile(x + 1, y)
+            local west = not self:getTile(x - 1, y)
+
+            if not north and dir == 0 then
+                y = y - 1
+            elseif not east and dir == 1 then
+                x = x + 1
+            elseif not south and dir == 2 then
+                y = y + 1
+            elseif not west and dir == 3 then
+                x = x - 1
+            end
+        until (lcg:random() >= 0.9) or (south and west and east and north)
     end
 
     for x = 0, width do
@@ -224,6 +282,14 @@ function World:place()
             local eastEast = not self:getTile(x + 2, y)
             local west = not self:getTile(x - 1, y)
             local westWest = not self:getTile(x - 2, y)
+            local dirtyNorth = isDirt(x, y - 1)
+            local dirtyNorthWest = isDirt(x - 1, y - 1)
+            local dirtyNorthEast = isDirt(x + 1, y - 1)
+            local dirtySouth = isDirt(x, y + 1)
+            local dirtySouthWest = isDirt(x - 1, y + 1)
+            local dirtySouthEast = isDirt(x + 1, y + 1)
+            local dirtyEast = isDirt(x + 1, y)
+            local dirtyWest = isDirt(x - 1, y)
 
             -- This logic is definitely broken in some places, so fix it where necessary.
             -- WARNING: Trying to understand this logic can cause suicidal thoughts.
@@ -236,15 +302,47 @@ function World:place()
                    table.insert(nodes, {x = x * 32 + 16, y = y * 32 + 16, neighbors = {}})
                 end
 
-                tilesBatch:addq(tilesetQuads.floor, x * 32, y * 32)
+                if isDirt(x, y) then
+                    tilesBatch:addq(tilesetQuads.dirt, x * 32, y * 32)
+                else
+                    if dirtyNorth and dirtyEast and dirtySouth and dirtyWest then
+                        tilesBatch:addq(tilesetQuads.dirt, x * 32, y * 32)
+                    elseif dirtyNorth then
+                        if dirtyWest then
+                            tilesBatch:addq(tilesetQuads.dirtBottomRightInverted, x * 32, y * 32)
+                        elseif dirtyEast then
+                            tilesBatch:addq(tilesetQuads.dirtBottomLeftInverted, x * 32, y * 32)
+                        else
+                            tilesBatch:addq(tilesetQuads.dirtBottom, x * 32, y * 32)
+                        end
+                    elseif dirtySouth then
+                        if dirtyWest then
+                            tilesBatch:addq(tilesetQuads.dirtTopRightInverted, x * 32, y * 32)
+                        elseif dirtyEast then
+                            tilesBatch:addq(tilesetQuads.dirtTopLeftInverted, x * 32, y * 32)
+                        else
+                            tilesBatch:addq(tilesetQuads.dirtTop, x * 32, y * 32)
+                        end
+                    elseif dirtyWest then
+                        tilesBatch:addq(tilesetQuads.dirtRight, x * 32, y * 32)
+                    elseif dirtyEast then
+                        tilesBatch:addq(tilesetQuads.dirtLeft, x * 32, y * 32)
+                    elseif dirtySouthWest then
+                        tilesBatch:addq(tilesetQuads.dirtTopRight, x * 32, y * 32)
+                    elseif dirtySouthEast then
+                        tilesBatch:addq(tilesetQuads.dirtTopLeft, x * 32, y * 32)
+                    elseif dirtyNorthWest then
+                        tilesBatch:addq(tilesetQuads.dirtBottomRight, x * 32, y * 32)
+                    elseif dirtyNorthEast then
+                        tilesBatch:addq(tilesetQuads.dirtBottomLeft, x * 32, y * 32)
+                    else
+                        tilesBatch:addq(tilesetQuads.floor, x * 32, y * 32)
+                    end
+                end
 
                 if lcg:random() >= 0.992 then
                     tilesBatch:addq(tilesetQuads["rock" .. math.ceil(lcg:random() * 3)], x * 32, y * 32)
                 end
-            elseif (not south and not north) or (not east and not west) then
-                -- Clear 1x walls cause they look shit
-                self:setTile(x, y, true)
-                tilesBatch:addq(tilesetQuads.floor, x * 32, y * 32)
             else
                 setWall(x, y)
 
