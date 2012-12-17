@@ -6,5 +6,5 @@ cd deps
 copy /b love.exe+..\dist\ld25.love ..\dist\phaedra.exe
 copy /b *.dll ..\dist\
 cd ..
-dist\ld25.exe
+dist\phaedra.exe
 cd util
