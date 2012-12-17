@@ -105,6 +105,11 @@ function Entity:onHitWall()
         self:stop()
     end
 end
+function Entity:onHitEntity(entity)
+    if self.isPatrolling and self.patrolPos ~= nil then
+        self:stop()
+    end
+end
 
 function entityMoveTo(entity, dt, args)
     local x = args[1]
