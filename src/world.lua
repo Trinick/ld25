@@ -52,17 +52,21 @@ function World:dig()
     local height = self.height
     local rooms = self.rooms
     local lcg = self.lcg
-    local count = 16 + math.floor(lcg:random() * (width + height) / 2) * 2
+    local roomCount = 16 + math.floor(lcg:random() * (width + height) / 2) * 2
 
+    -- Initialize the initial tilemap to all solid
     for x = 1, width do
         for y = 1, height, 1 do
             self.tiles[x .. "_" .. y] = false
         end
     end
 
-    for j = 1, 2, 1 do
-        for i = 0, count do
-            if j == 1 then
+    -- Complete two passes, first pass generating room positions
+    -- then hollow out hallways
+
+    for j = 1, 2 do
+        if j == 1 then
+            for i = 0, roomCount do
                 local x, y, radius, size
 
                 repeat
@@ -84,77 +88,79 @@ function World:dig()
                 end
 
                 table.insert(rooms, room)
-            else
-                for k, room in pairs(rooms) do
-                    local next = rooms[k + 1]
-                    local x = room.x
-                    local y = room.y
+            end
+        else
+            for k, room in pairs(rooms) do
+                local next = rooms[k + 1]
+                local x = room.x
+                local y = room.y
 
-                    if next then
-                        local nextX = next.x
-                        local nextY = next.y
-                        local nextSize = next.size
-                        local nextRadius = next.radius
-                        local targets
+                if next then
+                    local nextX = next.x
+                    local nextY = next.y
+                    local nextSize = next.size
+                    local nextRadius = next.radius
+                    local targets
 
-                        if lcg:random() >= 0.5 then
-                            targets = {{
-                                x = x,
-                                y = nextY,
-                                radius = 1
-                            }, {
-                                x = nextX,
-                                y = nextY,
-                                radius = nextRadius
-                            }}
-                        else
-                            targets = {{
-                                x = nextX,
-                                y = y,
-                                radius = 1
-                            }, {
-                                x = nextX,
-                                y = nextY,
-                                radius = nextRadius
-                            }}
+                    -- Possibly choose
+
+                    if lcg:random() >= 0.5 then
+                        targets = {{
+                            x = x,
+                            y = nextY,
+                            radius = 1
+                        }, {
+                            x = nextX,
+                            y = nextY,
+                            radius = nextRadius
+                        }}
+                    else
+                        targets = {{
+                            x = nextX,
+                            y = y,
+                            radius = 1
+                        }, {
+                            x = nextX,
+                            y = nextY,
+                            radius = nextRadius
+                        }}
+                    end
+
+                    repeat
+                        target = targets[1]
+                        targetX = target.x
+                        targetY = target.y
+                        targetRadius = target.radius
+
+                        self:setTile(x, y, true)
+                        self:setTile(x + 1, y, true)
+                        self:setTile(x - 1, y, true)
+                        self:setTile(x, y + 1, true)
+                        self:setTile(x, y - 1, true)
+                        self:setTile(x - 1, y - 1, true)
+                        self:setTile(x + 1, y - 1, true)
+                        self:setTile(x - 1, y + 1, true)
+                        self:setTile(x + 1, y + 1, true)
+
+                        if math.sqrt((targetX - x) ^ 2 + (targetY - y) ^ 2) < targetRadius then
+                            table.remove(targets, 1)
                         end
 
-                        repeat
-                            target = targets[1]
-                            targetX = target.x
-                            targetY = target.y
-                            targetRadius = target.radius
+                        local north = math.sqrt((targetX - x) ^ 2 + (targetY - (y + 1)) ^ 2)
+                        local south = math.sqrt((targetX - x) ^ 2 + (targetY - (y - 1)) ^ 2)
+                        local east = math.sqrt((targetX - (x + 1)) ^ 2 + (targetY - y) ^ 2)
+                        local west = math.sqrt((targetX - (x - 1)) ^ 2 + (targetY - y) ^ 2)
 
-                            self:setTile(x, y, true)
-                            self:setTile(x + 1, y, true)
-                            self:setTile(x - 1, y, true)
-                            self:setTile(x, y + 1, true)
-                            self:setTile(x, y - 1, true)
-                            self:setTile(x - 1, y - 1, true)
-                            self:setTile(x + 1, y - 1, true)
-                            self:setTile(x - 1, y + 1, true)
-                            self:setTile(x + 1, y + 1, true)
-
-                            if math.sqrt((targetX - x) ^ 2 + (targetY - y) ^ 2) < targetRadius then
-                                table.remove(targets, 1)
-                            end
-
-                            local north = math.sqrt((targetX - x) ^ 2 + (targetY - (y + 1)) ^ 2)
-                            local south = math.sqrt((targetX - x) ^ 2 + (targetY - (y - 1)) ^ 2)
-                            local east = math.sqrt((targetX - (x + 1)) ^ 2 + (targetY - y) ^ 2)
-                            local west = math.sqrt((targetX - (x - 1)) ^ 2 + (targetY - y) ^ 2)
-
-                            if north <= west and north <= south and north <= east then
-                                y = y + 1
-                            elseif south <= west and south <= north and south <= east then
-                                y = y - 1
-                            elseif east <= west and east <= south and east <= north then
-                                x = x + 1
-                            elseif west <= east and west <= south and west <= north then
-                                x = x - 1
-                            end
-                        until #targets < 1
-                    end
+                        if north <= west and north <= south and north <= east then
+                            y = y + 1
+                        elseif south <= west and south <= north and south <= east then
+                            y = y - 1
+                        elseif east <= west and east <= south and east <= north then
+                            x = x + 1
+                        elseif west <= east and west <= south and west <= north then
+                            x = x - 1
+                        end
+                    until #targets < 1
                 end
             end
         end
