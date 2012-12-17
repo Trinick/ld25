@@ -70,6 +70,17 @@ function Entity:clientCheck(x, y)
 	end
 	return 0
 end
+function Entity:clientBoxCheck(bMinX, bMinY, bMaxX, bMaxY)
+    local minX = self.cx + self.entityClass.offsetX
+    local minY = self.cy + self.entityClass.offsetY
+    local maxX = minX + self.entityClass.width
+    local maxY = minY + self.entityClass.height
+
+    if minX < bMaxX and minY < bMaxY and bMinX < maxX and bMinY < maxY then
+        return true
+    end
+    return false
+end
 
 function Entity:spawnEnemy()
     Enemy.new(self.cx + 50, self.cy, 32, 64, world)
