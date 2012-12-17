@@ -106,7 +106,7 @@ function AudioCtl:playSound(name)
     volume = 1.0
 
     for soundName, soundObj in pairs(self.sfx) do
-        if soundnName == name then
+        if soundName == name then
             sound = soundObj
             volume = self.sfxVolumes[soundName]
 
