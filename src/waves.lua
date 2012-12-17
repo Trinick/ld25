@@ -10,31 +10,48 @@ function WaveMgr.new(total, spawns)
 	inst.batch = math.floor(total / #spawns)
 	inst.total = total
 	inst.dispatched = 0
+	inst.dispatchStep = 0
+	inst.dispatching = nil
 
 	return inst
 end
 
 function WaveMgr:update(dt)
-	if #world.enemies == 0 then
-		if self.dispatched >= self.total then
-			print("win")
-		else
-			self.dispatched = self.dispatched + self.batch
+	local spawn = self.dispatching
+	local old = self.dispatchStep
 
-			local spawn = self.spawns[math.ceil(world.lcg:random() * #self.spawns)]
+	if spawn then
+		self.dispatchStep = self.dispatchStep + dt
 
-			for i = 0, self.batch do
-				local enemy = Enemy.new(spawn.x * 32, spawn.y * 32, "HeroKnight")
-				enemy:pushCmd(entityPatrol, {true, 128, 18, 3})
-			end
+		if math.floor(self.dispatchStep) > old then
+			local enemy = Enemy.new(spawn.x * 32, spawn.y * 32, "HeroKnight")
 
-			gui:notifyWave(spawn.x, spawn.y)
+			self.dispatched = self.dispatched + 1
+
+			enemy:pushCmd(entityPatrol, {true, 128, 18, 3})
 			print("Dispatched " .. self.dispatched .. "/" .. self.total)
 		end
-	end
 
-	if #world.friendlies == 0 then
-		print("lose")
+		if self.dispatchStep >= self.batch then
+			self.dispatching = nil
+		end
+	else
+		if #world.enemies == 0 then
+			if self.dispatched >= self.total then
+				print("win")
+			else
+				local spawn = self.spawns[math.ceil(world.lcg:random() * #self.spawns)]
+
+				self.dispatchStep = 0
+				self.dispatching = spawn
+
+				gui:notifyWave(spawn.x, spawn.y)
+			end
+		end
+
+		if #world.friendlies == 0 then
+			print("lose")
+		end
 	end
 end
 
