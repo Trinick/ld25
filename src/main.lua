@@ -4,6 +4,7 @@ HC = require "collision"
 ClassMgrMeta = require "classes"
 GUI = require "gui"
 require "navigation"
+WaveMgr = require "waves"
 
 tips = {
     "PROTIP: You're not a villain unless your minions die for you.",
@@ -16,6 +17,7 @@ function love.load()
     tileset = love.graphics.newImage("art/images/tiles.png")
     font = love.graphics.newFont("art/fonts/04b03.ttf", 17)
     gui = GUI.new()
+    wavectrl = WaveMgr.new()
     collider = HC(100, onCollision, onCollisionStop)
     classMgr = ClassMgrMeta.new()
     world = World.new(math.ceil(math.random() * 123456789))
@@ -24,6 +26,7 @@ end
 
 function love.update(dt)
     gui:update(dt)
+    wavectrl:update(dt)
     world:update(dt)
 
     if gui.loaded then
@@ -67,6 +70,7 @@ function love.draw()
 end
 
 function love.keypressed(button)
+
     if button == " " then
         for i, entity in pairs(control.controlling) do
             entity:attack()
@@ -79,6 +83,7 @@ function love.keypressed(button)
     end
     if gui.loaded and not gui.ready then
         gui.ready = true
+        wavectrl:start()
     end
 
     if button == "lctrl" then

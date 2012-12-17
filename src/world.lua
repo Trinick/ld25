@@ -421,10 +421,12 @@ function World:populate()
         y = self.rooms[room].y
         Friendly.new(x*32, y*32, (math.floor(world.lcg:random()*10)%4)+1)
     end
-    local ranroom = self.rooms[#self.rooms-1]
-    local enemyx = ranroom.x
-    local enemyy = ranroom.y
-    local debugEnemy = Enemy.new(enemyx * 32, enemyy * 32, "HeroKnight")
+    for i=0,#self.rooms/4,1 do
+        local ranroom = self.rooms[math.floor(((world.lcg:random() * 10) % (#self.rooms-1)) + 1)]
+        local enemyx = ranroom.x
+        local enemyy = ranroom.y
+        wavectrl:addSpawnPoint(enemyx, enemyy)
+    end
 
     self.cameraX = -x * 32
     self.cameraY = -y * 32

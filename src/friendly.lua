@@ -86,9 +86,11 @@ function Friendly:attack()
         enemy = enemy.instance
         if enemy ~= nil then
             if enemy.className == "enemy" then
-                enemy.damageblinkend = 0.10
-                enemy.oldcolor = enemy.color
-                enemy.color = {255, 96, 96}
+                if(enemy.damageblinkend == nil) then
+                    enemy.damageblinkend = 0.10
+                    enemy.oldcolor = enemy.color
+                    enemy.color = {255, 96, 96}
+                end
                 enemy.health = enemy.health - self.damage
                 if enemy.health < 0 then
                     enemy:delete()
