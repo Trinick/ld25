@@ -13,6 +13,7 @@ function GUI.new()
     inst.status = love.graphics.newImage("art/images/status.png")
     inst.map = love.graphics.newImage("art/images/map.png")
     inst.mapCanvas = nil
+    inst.tip = nil
 
     return inst
 end
@@ -35,7 +36,10 @@ end
 function GUI:renderLoading()
     local width = love.graphics.getWidth()
     local height = love.graphics.getHeight()
-    local tip = tips[math.ceil(math.random() * #tips)]
+    if self.tip == nil then
+        self.tip = tips[math.ceil(math.random() * #tips)]
+    end
+    local tip = self.tip
     local tipWidth = font:getWidth(tip)
 
     love.graphics.setColor(255, 255, 255)
