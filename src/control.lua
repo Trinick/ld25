@@ -191,6 +191,7 @@ function Control:onMouseDown(x, y, button)
     y = y - world.cameraY - height / 2
 
     if button == "l" then
+        self:clear()
         self.controlling = nil
         self.selectedEntities = {}
         self.selectBox.exists = true
@@ -203,18 +204,16 @@ function Control:onMouseDown(x, y, button)
         for i, ent in pairs(self.selectedEntities) do
             ent:clearCmds()
             ent:stop()
-            debugObj = ent
-            debugPath = getPath(x, y, ent.cx + 16, ent.cy + 16, {[ent.collision] = 1})
-            if debugPath == nil then
-            elseif debugPath == 0 then
+            local path = getPath(x, y, ent.cx + 16, ent.cy + 16, {[ent.collision] = 1})
+            if path == nil then
+            elseif path == 0 then
                 ent:pushCmd(entityMoveTo, {x, y, 2})
-            elseif # debugPath > 0 then
-                for a, node in pairs(debugPath) do
+            elseif # path > 0 then
+                for a, node in pairs(path) do
                     ent:pushCmd(entityMoveTo, {world.nodes[node].x, world.nodes[node].y, 4})
                 end
                 ent:pushCmd(entityMoveTo, {x, y, 2})
             end
-            debugPos = {x, y}
         end
     end
 end
