@@ -371,7 +371,22 @@ function World:render()
     love.graphics.setColor(255, 255, 255)
     love.graphics.draw(self.tilesBatch)
 
+    -- TODO: optimize
+    function isControlled(entity)
+        for i, controlled in pairs(control.controlling) do
+            if controlled == entity then
+                return true
+            end
+        end
+
+        return false
+    end
+
     for i, entity in pairs(self.entities) do
+        if isControlled(entity) then
+            love.graphics.setColor(189, 129, 171)
+        end
+
         entity:render()
     end
 

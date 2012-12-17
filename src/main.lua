@@ -5,6 +5,10 @@ ClassMgrMeta = require "classes"
 GUI = require "gui"
 require "navigation"
 
+tips = {
+    
+}
+
 function love.load()
     love.graphics.setBackgroundColor(89, 29, 71)
 

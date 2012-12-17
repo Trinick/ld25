@@ -35,7 +35,7 @@ end
 function GUI:renderLoading()
     local width = love.graphics.getWidth()
     local height = love.graphics.getHeight()
-    local tip = "PROTIP: Having unsafe sex can result in STIs."
+    local tip = math.ceil(math.random() * #tips)
     local tipWidth = font:getWidth(tip)
 
     love.graphics.setColor(255, 255, 255)
