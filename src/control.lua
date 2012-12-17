@@ -124,6 +124,9 @@ function Control:update(dt)
         local x = love.mouse.getX()
         local y = love.mouse.getY()
 
+        self.selectBox.finalX = x - world.cameraX - width / 2
+        self.selectBox.finalY = y - world.cameraY - height / 2
+
         if x > mapX and x < mapX + mapWidth and y > mapY and y < mapY + mapHeight then
             world.cameraX = (x - mapX) * -32
             world.cameraY = (y - mapY) * -32
@@ -171,8 +174,7 @@ function Control:onMouseUp(x, y, button)
             local x2 = math.max(self.selectBox.originX, self.selectBox.finalX)
             local y2 = math.max(self.selectBox.originY, self.selectBox.finalY)
             for i, entity in pairs(world.entities) do
-                if entity.canBeControlled and entity.cx >= x1 and entity.cx <= x2 and
-                    entity.cy >= y1 and entity.cy <= y2 then
+                if entity.canBeControlled and entity:clientBoxCheck(x1, y1, x2, y2) then
                     table.insert(self.selectedEntities, entity)
                 end
             end
@@ -180,7 +182,7 @@ function Control:onMouseUp(x, y, button)
             if #(self.selectedEntities) == 1 then
                 local entity = self.selectedEntities[1]
                 self.selectedEntities = {}
-                table.insert(self.controlling, entity)
+                self.controlling[1] = entity
                 entity:clearCmds()
                 entity:stop()
                 entity.isControlled = true
