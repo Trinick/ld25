@@ -16,6 +16,7 @@ function love.load()
 
     tileset = love.graphics.newImage("art/images/tiles.png")
     font = love.graphics.newFont("art/fonts/04b03.ttf", 17)
+    bigFont = love.graphics.newFont("art/fonts/04b03.ttf", 26)
     gui = GUI.new()
     collider = HC(100, onCollision, onCollisionStop)
     classMgr = ClassMgrMeta.new()
@@ -34,7 +35,8 @@ function love.update(dt)
 end
 
 function love.draw()
-    if gui.loaded then
+    if gui.over then
+    elseif gui.loaded then
         if gui.ready then
             world:render()
             
@@ -67,13 +69,22 @@ function love.keypressed(button)
             control.controlling:attack()
         end
     end
+
     if button == "rctrl" then
         for i, entity in pairs(control.controlling) do
             entity:spawnEnemy()
         end
     end
+
     if gui.loaded and not gui.ready then
         gui.ready = true
+    elseif gui.over then
+        gui.ready = false
+        gui.loaded = false
+        gui.over = false
+
+        world:clear()
+        world:populate()
     end
 
     if button == "lctrl" then

@@ -517,6 +517,12 @@ function World:finalize()
     gui:renderMap()
 end
 
+function World:clear()
+    for _, entity in pairs(self.entities) do
+        entity:delete()
+    end
+end
+
 function World:populate()
     local heroSpawnCount = math.ceil(#self.rooms / 4)
     local heroSpawns = {}
@@ -589,7 +595,7 @@ function World:update(dt)
         entity:think(dt)
     end
 
-    if self.waveMgr then
+    if self.waveMgr and gui.ready then
         self.waveMgr:update(dt)
     end
 end

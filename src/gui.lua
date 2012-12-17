@@ -123,12 +123,40 @@ function GUI:renderHUD()
     end
 end
 
+function GUI:renderOver()
+    local width = love.graphics.getWidth()
+    local height = love.graphics.getHeight()
+    local title
+    local msg
+
+    if not gui.won then
+        title = "YOU LOST!"
+        msg = "So long and thanks for all the decorative monster heads!"
+    else
+        title = "YOU WON!"
+        msg = "There's no better way to thank a minion than pain and suffering!"
+    end
+
+    local titleWidth = bigFont:getWidth(title)
+    local msgWidth = font:getWidth(msg)
+
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.draw(self.skull, width / 2 - self.skull:getWidth() / 2, height / 2 - self.skull:getHeight() / 2)
+    love.graphics.setFont(bigFont)
+    love.graphics.print(title, width / 2 - titleWidth / 2, height / 2 - self.skull:getHeight() * 7 / 6)
+    love.graphics.setFont(font)
+    love.graphics.print(msg, width / 2 - msgWidth / 2, height / 2 + self.skull:getHeight() * 7 / 6)
+    love.graphics.print("Press any key to start a new game", 16, height - 32)
+end
+
 function GUI:render()
     love.graphics.push()
     love.graphics.setFont(font)
 
     if not self.loaded or not self.ready then
         self:renderLoading()
+    elseif self.over then
+        self:renderOver()
     else
         self:renderHUD()
     end

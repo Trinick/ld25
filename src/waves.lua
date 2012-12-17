@@ -45,20 +45,22 @@ function WaveMgr:update(dt)
 	else
 		if #world.enemies == 0 then
 			if self.dispatched >= self.total then
-				print("win")
+				gui.over = true
+				gui.won = false
 			else
 				local spawn = self.spawns[1]
-
+			
 				self.dispatchStep = 0
 				self.dispatching = spawn
-
+			
 				table.remove(self.spawns, 1)
 				gui:notifyWave(spawn.x, spawn.y)
 			end
 		end
 
 		if #world.friendlies == 0 then
-			print("lose")
+			gui.over = true
+			gui.won = false
 		end
 	end
 end
