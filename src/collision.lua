@@ -3,16 +3,19 @@ HC = require "hardoncollider"
 function onCollision(dt, shapeA, shapeB, mtvX, mtvY)
     if shapeB.isWall then
         shapeA:move(mtvX, mtvY)
-        shapeA.instance.x = shapeA.instance.x + mtvX
-        shapeA.instance.y = shapeA.instance.y + mtvY
+        local cx, cy = shapeA:center()
+        shapeA.instance.cx = cx
+        shapeA.instance.cy = cy
     else
         shapeA:move(mtvX / 2, mtvY / 2)
-        shapeA.instance.x = shapeA.instance.x + mtvX / 2
-        shapeA.instance.y = shapeA.instance.y + mtvY / 2
+        local cx, cy = shapeA:center()
+        shapeA.instance.cx = cx
+        shapeA.instance.cy = cy
 
         shapeB:move(-mtvX / 2, -mtvY / 2)
-        shapeB.instance.x = shapeB.instance.x - mtvX / 2
-        shapeB.instance.y = shapeB.instance.y - mtvY / 2
+        cx, cy = shapeB:center()
+        shapeB.instance.cx = cx
+        shapeB.instance.cy = cy
     end
 end
 

@@ -43,7 +43,7 @@ end
 
 function WaveMgr:newWave()
 	for i=1,#self.spawnPoints,1 do
-		Enemy.new(self.spawnPoints[i][1] * 32, self.spawnPoints[i][2] * 32, "HeroKnight")
+		Enemy.new(self.spawnPoints[i][1] * 32 + 16, self.spawnPoints[i][2] * 32 + 16, "HeroKnight")
 	end
 end
 

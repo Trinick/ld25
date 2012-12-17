@@ -3,7 +3,7 @@ Entity.__index = Entity
 
 drawLine = {}
 
-function Entity.new(x, y, width, height, class)
+function Entity.new(x, y, class)
     local inst = {}
 
     setmetatable(inst, Entity)
@@ -11,10 +11,8 @@ function Entity.new(x, y, width, height, class)
     inst.className = "entity"
     inst.class = 0x00
     inst.entityClass = classMgr.classes[1]
-    inst.x = x
-    inst.y = y
-    inst.width = width
-    inst.height = height
+    inst.cx = x
+    inst.cy = y
     inst.direction = 0
     inst.canBeControlled = false
     inst.cmds = {}
@@ -58,11 +56,16 @@ function Entity:render()
         quad:flip(true, false)
     end
 
-    love.graphics.drawq(class.tileset, quad, math.floor(self.x), math.floor(self.y), 0, 1, 1, 0, 0)
+    love.graphics.drawq(class.tileset, quad, math.floor(self.cx + self.entityClass.offsetX), math.floor(self.cy + self.entityClass.offsetY), 0, 1, 1, 0, 0)
 end
 
-function Entity:collisionCheck(x, y)
-	if x > self.x and x < self.x + self.width and y > self.y and y < self.y + self.height then
+function Entity:clientCheck(x, y)
+    local minX = self.cx + self.entityClass.offsetX
+    local minY = self.cy + self.entityClass.offsetY
+    local maxX = minX + self.entityClass.width
+    local maxY = minY + self.entityClass.height
+
+	if x >= minX and x <= maxX  and y >= minY and y <= maxY then
 		return 1
 	end
 	return 0

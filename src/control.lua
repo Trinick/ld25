@@ -57,13 +57,13 @@ function Control:moveCheck(dt)
 
             if entity.collision ~= nil then
                 entity.collision:move(eew, ens)
-                local x1, y1, x2, y2 = entity.collision:bbox() 
-                entity.x = x1
-                entity.y = y1
+                local cx, cy = entity.collision:center() 
+                entity.cx = cx
+                entity.cy = cy
             end
             if ens ~= 0 or eew ~= 0 then
-                entity.x = entity.x + eew
-                entity.y = entity.y + ens
+                entity.cx = entity.cx + eew
+                entity.cy = entity.cy + ens
                 entity.stepFrac = entity.stepFrac + (dt*4)
             end
 
@@ -133,8 +133,8 @@ function Control:update(dt)
         local target = self.controlling[self.controllingIndex]
 
         if target then
-            world.cameraX = -target.x - target.width / 2
-            world.cameraY = -target.y - target.height / 2
+            world.cameraX = -target.cx
+            world.cameraY = -target.cy
             self.controllingIndex = ((self.controllingIndex + 1) % #self.controlling) + 1
         end
     end
@@ -165,7 +165,7 @@ function Control:onMouseDown(x, y, button)
         self.controlling = {}
         for i, entity in pairs(world.entities) do
             if entity.canBeControlled then
-                if entity:collisionCheck(x, y) == 1 then
+                if entity:clientCheck(x, y) == 1 then
                     table.insert(self.controlling, entity)
                     entity:clearCmds()
                     entity:stop()
@@ -179,11 +179,11 @@ function Control:onMouseDown(x, y, button)
     if button == "r" then
         if self.controlling[1] ~= nil then
             if self.controlling[1] ~= 0 then
-                if self.controlling[1].x ~= nil then
+                if self.controlling[1].cx ~= nil then
                     self.controlling[1]:clearCmds()
                     self.controlling[1]:stop()
                     debugObj = self.controlling[1]
-                    debugPath = getPath(x, y, self.controlling[1].x + 16, self.controlling[1].y + 16, {[self.controlling[1].collision] = 1})
+                    debugPath = getPath(x, y, self.controlling[1].cx, self.controlling[1].cy, {[self.controlling[1].collision] = 1})
                     if debugPath == nil then
                     elseif debugPath == 0 then
                         self.controlling[1]:pushCmd(entityMoveTo, {x, y, 4})

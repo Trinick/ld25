@@ -8,17 +8,17 @@ function ClassMgr.new()
 
     inst.classes = {}
 
-    inst:initializeClass("spider", "Spider", 64, 64, 100, 96, 15)
-    inst:initializeClass("skeleton", "Skeleton", 32, 64, 200, 48, 10)
-    inst:initializeClass("ghost", "Ghost", 32, 64, 150, 80, 10)
-    inst:initializeClass("slime", "Slime", 24, 32, 10, 32, 25)
+    inst:initializeClass("spider", "Spider", 64, 64, 100, 96, 15, 32, 32, -32, -32)
+    inst:initializeClass("skeleton", "Skeleton", 32, 64, 200, 48, 10, 32, 32, -16, -32)
+    inst:initializeClass("ghost", "Ghost", 32, 64, 150, 80, 10, 32, 32, -16, -32)
+    inst:initializeClass("slime", "Slime", 24, 32, 10, 32, 25, 24, 24, -12, -16)
 
-    inst:initializeClass("hero_knight", "HeroKnight", 64, 64, 100, 64, 10)
-    inst:initializeClass("hero_templar","HeroTemplar", 64, 64, 200, 48, 15)
+    inst:initializeClass("hero_knight", "HeroKnight", 64, 64, 100, 64, 10, 32, 32, -32, -32)
+    inst:initializeClass("hero_templar","HeroTemplar", 64, 64, 200, 48, 15, 32, 32, -32, -32)
     return inst
 end
 
-function ClassMgr:initializeClass(id, name, width, height, health, speed, damage)
+function ClassMgr:initializeClass(id, name, width, height, health, speed, damage, colWidth, colHeight, offsetX, offsetY)
     local tileset = love.graphics.newImage("art/images/" .. id .. ".png")
     local inst = {}
 
@@ -33,6 +33,11 @@ function ClassMgr:initializeClass(id, name, width, height, health, speed, damage
     inst.down = {}
     inst.up = {}
     inst.lr = {}
+
+    inst.colWidth = colWidth
+    inst.colHeight = colHeight
+    inst.offsetX = offsetX
+    inst.offsetY = offsetY
 
     local list = {inst.down, inst.up, inst.lr}
 

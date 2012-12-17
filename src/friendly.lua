@@ -27,10 +27,8 @@ function Friendly.new(x, y, class)
     local height = entityClass.height
 
     inst.entityClass = entityClass
-    inst.x = x
-    inst.y = y
-    inst.width = width
-    inst.height = height
+    inst.cx = x
+    inst.cy = y
     inst.damage = entityClass.damage
     inst.direction = 0
     inst.step = 1
@@ -45,7 +43,7 @@ function Friendly.new(x, y, class)
 
     inst.health = entityClass.health
 
-    inst.collision = collider:addRectangle(x, y, width, height)
+    inst.collision = collider:addRectangle(x - entityClass.colWidth / 2, y - entityClass.colHeight / 2, entityClass.colWidth, entityClass.colHeight)
     inst.collision.instance = inst
 
     table.insert(world.entities, inst)
@@ -63,8 +61,8 @@ function Friendly:attack()
             table.insert(ignoreSet, entity.collision)
         end
     end
-    local startX = self.x + (self.width/2)
-    local startY = self.y + (self.height/2)
+    local startX = self.cx
+    local startY = self.cy
     local targetX = startX
     local targetY = startY
 

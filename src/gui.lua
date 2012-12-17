@@ -82,11 +82,11 @@ function GUI:renderHUD()
     love.graphics.setColor(255, 0, 0)
 
     for i, entity in pairs(world.enemies) do
-        love.graphics.point(math.floor(x + entity.x / 32 + 56), math.floor(entity.y / 32 + 36))
+        love.graphics.point(math.floor(x + entity.cx / 32 + 56), math.floor(entity.cy / 32 + 36))
     end
     love.graphics.setColor(0, 255, 0)
     for i, entity in pairs(world.friendlies) do
-        love.graphics.point(math.floor(x + entity.x / 32 + 56), math.floor(entity.y / 32 + 36))
+        love.graphics.point(math.floor(x + entity.cx / 32 + 56), math.floor(entity.cy / 32 + 36))
     end
 
     love.graphics.setColor(255, 255, 255)

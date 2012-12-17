@@ -46,11 +46,11 @@ function love.draw()
 
             if debugPath == nil then
             elseif debugPath == 0 then
-                love.graphics.line(debugObj.x + world.cameraX + love.graphics.getWidth() / 2 + 16, debugObj.y + world.cameraY + love.graphics.getHeight() / 2 + 16, debugPos[1] + world.cameraX + love.graphics.getWidth() / 2, debugPos[2] + world.cameraY + love.graphics.getHeight() / 2)
+                love.graphics.line(debugObj.cx + world.cameraX + love.graphics.getWidth() / 2, debugObj.cy + world.cameraY + love.graphics.getHeight() / 2, debugPos[1] + world.cameraX + love.graphics.getWidth() / 2, debugPos[2] + world.cameraY + love.graphics.getHeight() / 2)
             elseif # debugPath > 0 then
                 for a, id in pairs(debugPath) do
                     if a == 1 then
-                        love.graphics.line(debugObj.x + world.cameraX + love.graphics.getWidth() / 2 + 16, debugObj.y + world.cameraY + love.graphics.getHeight() / 2 + 16, world.nodes[id].x + world.cameraX + love.graphics.getWidth() / 2, world.nodes[id].y + world.cameraY + love.graphics.getHeight() / 2)
+                        love.graphics.line(debugObj.cx + world.cameraX + love.graphics.getWidth() / 2, debugObj.cy + world.cameraY + love.graphics.getHeight() / 2, world.nodes[id].x + world.cameraX + love.graphics.getWidth() / 2, world.nodes[id].y + world.cameraY + love.graphics.getHeight() / 2)
                     else
                         love.graphics.line(world.nodes[debugPath[a - 1]].x + world.cameraX + love.graphics.getWidth() / 2, world.nodes[debugPath[a - 1]].y + world.cameraY + love.graphics.getHeight() / 2, world.nodes[id].x + world.cameraX + love.graphics.getWidth() / 2, world.nodes[id].y + world.cameraY + love.graphics.getHeight() / 2)
                     end

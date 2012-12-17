@@ -10,7 +10,7 @@ function Enemy.new(x, y, class)
     inst.className = "enemy"
     inst.class = 0x02
     local entityClass = classMgr.classes[1]
-    if type(class == "string") then
+    if type(class) == "string" then
         local classNum = 1
         for i=1, #classMgr.classes, 1 do
             if(classMgr.classes[i].name == class) then
@@ -23,15 +23,9 @@ function Enemy.new(x, y, class)
         entityClass = classMgr.classes[class]
     end
 
-
-    local width = entityClass.width
-    local height = entityClass.height
-
     inst.entityClass = entityClass
-    inst.x = x
-    inst.y = y
-    inst.width = width
-    inst.height = height
+    inst.cx = x
+    inst.cy = y
     inst.damage = entityClass.damage
     inst.direction = 0
     inst.step = 1
@@ -45,7 +39,7 @@ function Enemy.new(x, y, class)
 
     inst.health = entityClass.health
 
-    inst.collision = collider:addRectangle(x, y, width, height)
+    inst.collision = collider:addRectangle(x - entityClass.colWidth / 2, y - entityClass.colHeight / 2, entityClass.colWidth, entityClass.colHeight)
     inst.collision.instance = inst
 
     table.insert(world.entities, inst)
@@ -63,8 +57,8 @@ function Enemy:attack()
             table.insert(ignoreSet, entity.collision)
         end
     end
-    local startX = self.x + (self.width/2)
-    local startY = self.y + (self.height/2)
+    local startX = self.cx
+    local startY = self.cy
     local targetX = startX
     local targetY = startY
 
