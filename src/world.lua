@@ -56,7 +56,7 @@ function World.new(seed)
                 room = { x = x, y = y, size = size, radius = radius}
 
                 if i == 0 then
-                    inst.player = Friendly.new(x * 32, y * 32, 16, 32)
+                    inst.player = Friendly.new(x * 32, y * 32, 32, 64)
                     inst.cameraX = -x * 32
                     inst.cameraY = -y * 32
 

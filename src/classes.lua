@@ -8,9 +8,9 @@ function ClassMgr.new()
 
     inst.classes = {}
 
-    inst:initializeClass("spider", "Spider", 32, 32)
+    inst:initializeClass("spider", "Spider", 64, 64)
     --inst:initializeClass("slime", "Slime")
-    inst:initializeClass("skeleton", "Skeleton", 16, 32)
+    inst:initializeClass("skeleton", "Skeleton", 32, 64)
     return inst
 end
 
