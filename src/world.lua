@@ -12,38 +12,53 @@ function World.new(seed)
 
     setmetatable(inst, World)
 
-    local lcg = LCG.new(seed)
-    local entities = {}
-    local friendlies = {}
-    local enemies = {}
-    local nodes = {}
-    local width = 100
-    local height = 100
-    local tiles = {}
+    inst.audioCtlr = AudioCtl.new()
+    inst.audioCtlr:playSong("derpy")
+    inst.entities = {}
+    inst.friendlies = {}
+    inst.enemies = {}
+    inst.nodes = {}
+    inst.lcg = LCG.new(seed)
+    inst.tiles = {}
+    inst.width = 100
+    inst.height = 100
+    inst.rooms = {}
+    inst.state = nil
+
+    return inst
+end
+
+function World:generate()
+    if self.state == nil then
+        gui.state = "Digging..."
+        self.state = "dig"
+    elseif self.state == "dig" then
+        self:dig()
+
+        gui.state = "Placing..."
+        self.state = "place"
+    elseif self.state == "place" then
+        self:place()
+
+        gui.state = "Finalizing..."
+        self.state = "finalize"
+    elseif self.state == "finalize" then
+        self:finalize()
+    end
+end
+
+function World:dig()
+    local width = self.width
+    local height = self.height
+    local rooms = self.rooms
+    local lcg = self.lcg
+    local count = 8 + math.floor(lcg:random() * (width + height) / 2)
 
     for x = 1, width do
         for y = 1, height, 1 do
-            tiles[x .. "_" .. y] = false
+            self.tiles[x .. "_" .. y] = false
         end
     end
-
-    inst.audioCtlr = AudioCtl.new()
-    inst.audioCtlr:playSong("derpy")
-
-    inst.renderString = ""
-    inst.entities = entities
-    inst.friendlies = friendlies
-    inst.enemies = enemies
-    inst.nodes = nodes
-    inst.lcg = lcg
-    inst.tiles = tiles
-    inst.width = width
-    inst.height = height
-
-    local rooms = {}
-    local count = 8 + math.floor(lcg:random() * (width + height) / 2)
-
-    gui.state = "Generating..."
 
     for j = 1, 2, 1 do
         for i = 0, count do
@@ -64,7 +79,7 @@ function World.new(seed)
 
                 for k = 0, size do
                     for l = 0, size do
-                        inst:setTile(kx + k, ky + l, true)
+                        self:setTile(kx + k, ky + l, true)
                     end
                 end
 
@@ -110,15 +125,15 @@ function World.new(seed)
                             targetY = target.y
                             targetRadius = target.radius
 
-                            inst:setTile(x, y, true)
-                            inst:setTile(x + 1, y, true)
-                            inst:setTile(x - 1, y, true)
-                            inst:setTile(x, y + 1, true)
-                            inst:setTile(x, y - 1, true)
-                            inst:setTile(x - 1, y - 1, true)
-                            inst:setTile(x + 1, y - 1, true)
-                            inst:setTile(x - 1, y + 1, true)
-                            inst:setTile(x + 1, y + 1, true)
+                            self:setTile(x, y, true)
+                            self:setTile(x + 1, y, true)
+                            self:setTile(x - 1, y, true)
+                            self:setTile(x, y + 1, true)
+                            self:setTile(x, y - 1, true)
+                            self:setTile(x - 1, y - 1, true)
+                            self:setTile(x + 1, y - 1, true)
+                            self:setTile(x - 1, y + 1, true)
+                            self:setTile(x + 1, y + 1, true)
 
                             if math.sqrt((targetX - x) ^ 2 + (targetY - y) ^ 2) < targetRadius then
                                 table.remove(targets, 1)
@@ -138,20 +153,22 @@ function World.new(seed)
                             elseif west <= east and west <= south and west <= north then
                                 x = x - 1
                             end
-                        until table.getn(targets) < 1
+                        until #targets < 1
                     end
                 end
             end
         end
     end
-    inst.rooms = rooms
+end
 
-    gui.state = "Placing..."
-
+function World:place()
     function tile(x, y)
         return love.graphics.newQuad(x * 32, y * 32, 32, 32, tileset:getWidth(), tileset:getHeight())
     end
 
+    local nodes = self.nodes
+    local width = self.width
+    local height = self.height
     local tilesetQuads = {
         wall = tile(4, 1),
         wallLeft = tile(4, 0),
@@ -159,33 +176,35 @@ function World.new(seed)
         roof = tile(5, 3),
         floor = tile(0, 1)
     }
-    local tilesBatch = love.graphics.newSpriteBatch(tileset, width * height)
-
+    local tilesBatch = love.graphics.newSpriteBatch(tileset, width * self.height)
     local walls = {}
+
     function setWall(x, y)
         walls[x .. "_" .. y] = true
     end
+
     function isWall(x, y)
         return walls[x .. "_" .. y] == true
     end
+
     for x = 0, width do
         for y = 0, height do
-            local curr = not inst:getTile(x, y)
-            local north = not inst:getTile(x, y - 1)
-            local northEast = not inst:getTile(x + 1, y - 1)
-            local northWest = not inst:getTile(x - 1, y - 1)
-            local south = not inst:getTile(x, y + 1)
-            local southEast = not inst:getTile(x + 1, y + 1)
-            local southEastSouth = not inst:getTile(x + 1, y + 2)
-            local southWest = not inst:getTile(x - 1, y + 1)
-            local southWestSouth = not inst:getTile(x - 1, y + 2)
-            local southSouth = not inst:getTile(x, y + 2)
-            local southSouthWest = not inst:getTile(x - 1, y + 2)
-            local southSouthEast = not inst:getTile(x + 1, y + 2)
-            local east = not inst:getTile(x + 1, y)
-            local eastEast = not inst:getTile(x + 2, y)
-            local west = not inst:getTile(x - 1, y)
-            local westWest = not inst:getTile(x - 2, y)
+            local curr = not self:getTile(x, y)
+            local north = not self:getTile(x, y - 1)
+            local northEast = not self:getTile(x + 1, y - 1)
+            local northWest = not self:getTile(x - 1, y - 1)
+            local south = not self:getTile(x, y + 1)
+            local southEast = not self:getTile(x + 1, y + 1)
+            local southEastSouth = not self:getTile(x + 1, y + 2)
+            local southWest = not self:getTile(x - 1, y + 1)
+            local southWestSouth = not self:getTile(x - 1, y + 2)
+            local southSouth = not self:getTile(x, y + 2)
+            local southSouthWest = not self:getTile(x - 1, y + 2)
+            local southSouthEast = not self:getTile(x + 1, y + 2)
+            local east = not self:getTile(x + 1, y)
+            local eastEast = not self:getTile(x + 2, y)
+            local west = not self:getTile(x - 1, y)
+            local westWest = not self:getTile(x - 2, y)
 
             -- This logic is definitely broken in some places, so fix it where necessary.
             -- WARNING: Trying to understand this logic can cause suicidal thoughts.
@@ -214,6 +233,7 @@ function World.new(seed)
 
     -- Wall Rectangle Optimization --
     local rectangles = {}
+
     for x = 0, width do
         local start_y
         local end_y
@@ -329,14 +349,22 @@ function World.new(seed)
         local height = (r.end_y - r.start_y + 1) * 32
 
         local box = collider:addRectangle(start_x, start_y, width, height)
+
         collider:setPassive(box)
     end
 
+    self.tilesBatch = tilesBatch
+end
+
+function World:finalize()
     -- Neighorhoo Generation for Navigation Nodes --
+    local nodes = self.nodes
     local checked = {}
+
     for a, node in pairs(nodes) do
         checked[a] = {}
     end
+
     for a, nodeA in pairs(nodes) do
         for b, nodeB in pairs(nodes) do
             if a ~= b and checked[a][b] == nil then
@@ -350,11 +378,10 @@ function World.new(seed)
         end
     end
 
-    gui.state = "Finalizing..."
-    gui.loaded = true
-    inst.tilesBatch = tilesBatch
+    self:populate()
 
-    return inst
+    gui.loaded = true
+    gui:renderMap()
 end
 
 function World:populate()
@@ -388,10 +415,6 @@ function World:render()
         end
 
         entity:render()
-    end
-
-    if self.renderString ~= "" then
-        love.graphics.printf(self.renderString, 0, 0, 800)
     end
 
     love.graphics.pop()
