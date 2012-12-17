@@ -21,6 +21,7 @@ end
 
 function love.update(dt)
     gui:update(dt)
+    world:update(dt)
     control:update(dt)
     collider:update(dt)
 end

@@ -1,10 +1,11 @@
 Enemy = {}
-Enemy.__index = Enemy
+EnemyMT = {__index = Enemy}
+setmetatable(Enemy, {__index = Entity})
 
 function Enemy.new(x, y, width, height, world)
 	local inst = {}
 
-    setmetatable(inst, Entity)
+    setmetatable(inst, EnemyMT)
 
     inst.className = "enemy"
     inst.class = 0x02
@@ -14,10 +15,14 @@ function Enemy.new(x, y, width, height, world)
     inst.width = width
     inst.height = height
     inst.direction = 0
+    inst.canBeControlled = false
 
     inst.moveSpeed = 5
 
     return inst
+end
+
+function Enemy:think(dt)
 end
 
 return Enemy

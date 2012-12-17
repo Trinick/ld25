@@ -386,4 +386,10 @@ function World:getTile(x, y)
     return self.tiles[x .. "_" .. y]
 end
 
+function World:update(dt)
+    for a, entity in pairs(self.entities) do
+        entity:think(dt)
+    end
+end
+
 return World

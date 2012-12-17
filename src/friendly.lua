@@ -1,10 +1,11 @@
 Friendly = {}
-Friendly.__index = Friendly
+FriendlyMT = {__index = Friendly}
+setmetatable(Friendly, {__index = Entity})
 
 function Friendly.new(x, y, width, height)
     local inst = {}
 
-    setmetatable(inst, Entity)
+    setmetatable(inst, FriendlyMT)
 
     inst.className = "friendly"
     inst.class = 0x01
@@ -18,6 +19,8 @@ function Friendly.new(x, y, width, height)
     inst.step = 1
     inst.stepFrac = 0
     inst.flipped = {false, false, false}
+    inst.canBeControlled = true
+    inst.isControlled = false
 
     inst.moveSpeed = 64
 
@@ -30,6 +33,9 @@ function Friendly.new(x, y, width, height)
     inst.collision.instance = inst
 
     return inst
+end
+
+function Friendly:think(dt)
 end
 
 return Friendly

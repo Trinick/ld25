@@ -87,6 +87,9 @@ function Control:moveCheck(dt)
 end
 
 function Control:clear()
+    for a, entity in pairs(self.controlling) do
+        entity.isControlled = false
+    end
     self.controlling = {}
     self.controllingIndex = 1
 end
@@ -113,8 +116,11 @@ function Control:onClick(x, y, button)
         self.controlling = {}
 
         for i, entity in pairs(world.entities) do
-            if entity:collisionCheck(x, y) == 1 then
-                table.insert(self.controlling, entity)
+            if entity.canBeControlled then
+                if entity:collisionCheck(x, y) == 1 then
+                    table.insert(self.controlling, entity)
+                    entity.isControlled = true
+                end
             end
         end
     end
@@ -125,7 +131,7 @@ function Control:onClick(x, y, button)
             if self.controlling[1] ~= 0 then
                 if self.controlling[1].x ~= nil then
                     debugObj = self.controlling[1]
-                    debugPath = getPath(x, y, self.controlling[1].x, self.controlling[1].y, {[self.controlling[1].collision] = 1})
+                    debugPath = getPath(x, y, self.controlling[1].x + 16, self.controlling[1].y + 16, {[self.controlling[1].collision] = 1})
                     debugPos = {x, y}
                 end
             end

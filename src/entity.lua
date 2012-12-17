@@ -90,4 +90,7 @@ function Entity:attack()
     end
 end
 
+function Entity:think(dt)
+end
+
 return Entity
