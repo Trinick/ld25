@@ -123,7 +123,7 @@ function entityMoveTo(entity, dt, args)
     local dy = y - cy
     local len = math.sqrt(math.pow(dx, 2) + math.pow(dy, 2))
 
-    if len <= minDist then
+    if #entity.cmds > 0 and len <= minDist then
         entity:stop()
         entity:popCmd(entityMoveTo)
     else

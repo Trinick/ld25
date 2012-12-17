@@ -6,7 +6,7 @@ function Control.new()
 
     setmetatable(inst, Control)
 
-    inst.controlling = {}
+    inst.controlling = nil
     inst.controllingIndex = 1
     inst.moving = false
     inst.mouseDown = {}
@@ -17,68 +17,60 @@ function Control.new()
 end
 
 function Control:moveCheck(dt)
-    for i, entity in pairs(self.controlling) do
-        if entity ~= 0 then if entity.class == 0x01 then
-            ens = 0
-            eew = 0
+    local entity = self.controlling
+    if entity ~= nil and entity.class == 0x01 then
+        dy = 0
+        dx = 0
 
-            local w = love.keyboard.isDown("w")
-            local a = love.keyboard.isDown("a")
-            local s = love.keyboard.isDown("s")
-            local d = love.keyboard.isDown("d")
+        local w = love.keyboard.isDown("w")
+        local a = love.keyboard.isDown("a")
+        local s = love.keyboard.isDown("s")
+        local d = love.keyboard.isDown("d")
 
-            if w then
-                ens = entity.moveSpeed * -dt
-                entity.direction = 1
-            end
-            if s then
-                ens = entity.moveSpeed * dt
-                entity.direction = 0
-            end
-            if d then
-                eew = entity.moveSpeed * dt
-                entity.direction = 2
-            end
-            if a then
-                eew = entity.moveSpeed * -dt
-                entity.direction = 3
-            end
+        if w then
+            dy = entity.moveSpeed * -dt
+            entity.direction = 1
+        end
+        if s then
+            dy = entity.moveSpeed * dt
+            entity.direction = 0
+        end
+        if d then
+            dx = entity.moveSpeed * dt
+            entity.direction = 2
+        end
+        if a then
+            dx = entity.moveSpeed * -dt
+            entity.direction = 3
+        end
 
-            if w or a or s or d then
-                entity:clearCmds()
-                entity:stop()
-                self.moving = true
-            else
-                self.moving = false
-            end
+        if w or a or s or d then
+            entity:clearCmds()
+            entity:stop()
+            self.moving = true
+        else
+            self.moving = false
+        end
 
-            if ens ~= 0 and eew ~= 0 then
-                local root2div2 = math.sqrt(2) / 2
-                ens = ens * root2div2
-                eew = eew * root2div2
-            end
+        if entity.collision ~= nil then
+            entity.collision:move(dx, dy)
+            local cx, cy = entity.collision:center() 
+            entity.cx = cx
+            entity.cy = cy
+        end
+        if dy ~= 0 or dx ~= 0 then
+            entityMoveTo(entity, dt, {entity.cx + dx, entity.cy + dy, 2})
+            entity.stepFrac = entity.stepFrac + (dt*4)
+        end
 
-            if entity.collision ~= nil then
-                entity.collision:move(eew, ens)
-                local cx, cy = entity.collision:center() 
-                entity.cx = cx
-                entity.cy = cy
-            end
-            if ens ~= 0 or eew ~= 0 then
-                entity.cx = entity.cx + eew
-                entity.cy = entity.cy + ens
-                entity.stepFrac = entity.stepFrac + (dt*4)
-            end
-
-            if ens == 0 and eew == 0 then
-                entity.stepFrac = 0
-                entity.step = 1
-            end end
+        if dy == 0 and dx == 0 then
+            entity.stepFrac = 0
+            entity.step = 1
         end
     end
 
-    local wns = 0
-    local wew = 0
+    local screenDy = 0
+    local screenDx = 0
 
     local multiplier
 
@@ -88,29 +80,29 @@ function Control:moveCheck(dt)
         multiplier = 1
     end
 
-    if(love.keyboard.isDown("up")) then
-        wns = 384 * dt * multiplier
+    if(love.keyboard.isDown("w")) then
+        screenDy = 384 * dt * multiplier
     end
-    if(love.keyboard.isDown("right")) then
-        wew = 384 * -dt * multiplier
+    if(love.keyboard.isDown("d")) then
+        screenDx = 384 * -dt * multiplier
     end
-    if(love.keyboard.isDown("down")) then
-         wns = 384 * -dt * multiplier
+    if(love.keyboard.isDown("s")) then
+         screenDy = 384 * -dt * multiplier
     end
-    if(love.keyboard.isDown("left")) then
-        wew = 384 * dt * multiplier
+    if(love.keyboard.isDown("a")) then
+        screenDx = 384 * dt * multiplier
     end
 
-    world.cameraX = world.cameraX + wew
-    world.cameraY = world.cameraY + wns
+    world.cameraX = world.cameraX + screenDx
+    world.cameraY = world.cameraY + screenDy
 end
 
 function Control:clear()
-    for a, entity in pairs(self.controlling) do
-        entity.isControlled = false
+    if self.controlling == nil then
+        return
     end
-    self.controlling = {}
-    self.controllingIndex = 1
+    self.controlling.isControlled = false
+    self.controlling = nil
 end
 
 function Control:update(dt)
@@ -135,14 +127,11 @@ function Control:update(dt)
 
     self:moveCheck(dt)
 
-    if #self.controlling > 0 and self.center then
-        local target = self.controlling[self.controllingIndex]
-
-        if target then
-            world.cameraX = -target.cx
-            world.cameraY = -target.cy
-            self.controllingIndex = ((self.controllingIndex + 1) % #self.controlling) + 1
-        end
+    if self.controlling ~= nil then
+        local target = self.controlling
+        print(target)
+        world.cameraX = -target.cx
+        world.cameraY = -target.cy
     end
 end
 
@@ -166,6 +155,7 @@ function Control:onMouseUp(x, y, button)
     if button == "l" then
         if self.selectBox.exists == true then
             self.selectedEntities = {}
+            self.controlling = nil
             self.selectBox.finalX = x
             self.selectBox.finalY = y
             self.selectBox.exists = false
@@ -181,8 +171,7 @@ function Control:onMouseUp(x, y, button)
             
             if #(self.selectedEntities) == 1 then
                 local entity = self.selectedEntities[1]
-                self.selectedEntities = {}
-                self.controlling[1] = entity
+                self.controlling = entity
                 entity:clearCmds()
                 entity:stop()
                 entity.isControlled = true
@@ -209,11 +198,11 @@ function Control:onMouseDown(x, y, button)
     y = y - world.cameraY - height / 2
 
     if button == "l" then
-        self.controlling = {}
+        self.controlling = nil
         self.selectedEntities = {}
-        self.selectBox.exists = true;
-        self.selectBox.originX = x;
-        self.selectBox.originY = y;
+        self.selectBox.exists = true
+        self.selectBox.originX = x
+        self.selectBox.originY = y
     end
 
     -- attempted selection movement --
@@ -233,30 +222,6 @@ function Control:onMouseDown(x, y, button)
                 ent:pushCmd(entityMoveTo, {x, y, 2})
             end
             debugPos = {x, y}
-        end
-    end
-
-    -- Pathfinding Debug - took this shit out, here for archive --
-    if button == "q" then
-        if self.controlling[1] ~= nil then
-            if self.controlling[1] ~= 0 then
-                if self.controlling[1].cx ~= nil then
-                    self.controlling[1]:clearCmds()
-                    self.controlling[1]:stop()
-                    debugObj = self.controlling[1]
-                    debugPath = getPath(x, y, self.controlling[1].cx, self.controlling[1].cy, {[self.controlling[1].collision] = 1})
-                    if debugPath == nil then
-                    elseif debugPath == 0 then
-                        self.controlling[1]:pushCmd(entityMoveTo, {x, y, 2})
-                    elseif # debugPath > 0 then
-                        for a, node in pairs(debugPath) do
-                            self.controlling[1]:pushCmd(entityMoveTo, {world.nodes[node].x, world.nodes[node].y, 2})
-                        end
-                        self.controlling[1]:pushCmd(entityMoveTo, {x, y, 2})
-                    end
-                    debugPos = {x, y}
-                end
-            end
         end
     end
 end
