@@ -80,6 +80,10 @@ function GUI:renderHUD()
     for i, entity in pairs(world.entities) do
         love.graphics.point(math.floor(x + entity.x / 32 + 56), math.floor(entity.y / 32 + 36))
     end
+
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.setLineWidth(1)
+    love.graphics.rectangle("line", math.floor(x + 56 + (-world.cameraX - width / 2) / 32), math.floor((-world.cameraY - height / 2) / 32 + 36), math.floor(width / 32), math.floor(height / 32))
 end
 
 function GUI:render()
