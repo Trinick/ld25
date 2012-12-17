@@ -29,7 +29,7 @@ function Entity:render()
         return
     end
 
-    local dirs = {class.down, class.up, class.lr}
+    local dirs = {class.down, class.up, class.left, class.right}
 
     if self.stepFrac > 1 then
         self.step = ((self.step + 1) % 3) + 1
@@ -37,24 +37,7 @@ function Entity:render()
     end
 
     local direction = self.direction
-    local quad
-
-    if self.direction ~= 3 then
-        quad = dirs[direction + 1][self.step]
-    end
-
-    if self.direction == 3 then
-        direction = 2
-        quad = dirs[direction + 1][self.step]
-
-        if self.flipped[self.step] ~= true then
-            quad:flip(true, false)
-            self.flipped[self.step] = true
-        end
-    elseif self.direction == 2 and self.flipped[self.step] then
-        self.flipped[self.step] = false
-        quad:flip(true, false)
-    end
+    local quad = dirs[direction + 1][self.step]
 
     love.graphics.drawq(class.tileset, quad, math.floor(self.cx + self.entityClass.offsetX), math.floor(self.cy + self.entityClass.offsetY), 0, 1, 1, 0, 0)
 end

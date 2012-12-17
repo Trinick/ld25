@@ -34,14 +34,15 @@ function ClassMgr:initializeClass(id, name, width, height, health, speed, damage
     inst.portrait = love.graphics.newImage("art/images/portrait_" .. id .. ".png")
     inst.down = {}
     inst.up = {}
-    inst.lr = {}
+    inst.left = {}
+    inst.right = {}
 
     inst.colWidth = colWidth
     inst.colHeight = colHeight
     inst.offsetX = offsetX
     inst.offsetY = offsetY
 
-    local list = {inst.down, inst.up, inst.lr}
+    local list = {inst.down, inst.up, inst.left, inst.right}
 
     table.insert(self.classes, inst)
 
@@ -54,6 +55,13 @@ function ClassMgr:initializeClass(id, name, width, height, health, speed, damage
             table.insert(list[y + 1], quad)
         end
     end
+
+    for x = 0, 2, 1 do
+        quad = love.graphics.newQuad(x * width, 2 * height, width, height, tileset:getWidth(), tileset:getHeight())
+        quad:flip(true, false)
+        table.insert(list[4], quad)
+    end
+
 end
 
 function ClassMgr:random()
