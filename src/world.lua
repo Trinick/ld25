@@ -527,7 +527,8 @@ function World:populate()
             local x = room.x - room.radius + math.floor(lcg:random() * room.size)
             local y = room.y - room.radius + math.floor(lcg:random() * room.size)
 
-            Friendly.new(x * 32 + 16, y * 32 + 16, (math.floor(world.lcg:random() * 10) % 4) + 1)
+            local friend = Friendly.new(x * 32 + 16, y * 32 + 16, (math.floor(world.lcg:random() * 10) % 4) + 1)
+            friend:pushCmd(entityPatrol, {true, 128, 18, 3})
         end
     end
 

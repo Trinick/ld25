@@ -24,7 +24,8 @@ function WaveMgr:update(dt)
 			local spawn = self.spawns[math.ceil(world.lcg:random() * #self.spawns)]
 
 			for i = 0, self.batch do
-				Enemy.new(spawn.x * 32, spawn.y * 32, "HeroKnight")
+				local enemy = Enemy.new(spawn.x * 32, spawn.y * 32, "HeroKnight")
+				enemy:pushCmd(entityPatrol, {true, 128, 18, 3})
 			end
 
 			gui:notifyWave(spawn.x, spawn.y)
