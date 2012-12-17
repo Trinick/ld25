@@ -544,20 +544,15 @@ function World:render()
     love.graphics.setColor(255, 255, 255)
     love.graphics.draw(self.tilesBatch)
 
-    -- TODO: optimize
-    function isControlled(entity)
-        for i, controlled in pairs(control.controlling) do
-            if controlled == entity then
-                return true
-            end
-        end
-
-        return false
+    function sortEntities(a, b)
+        return a.cy < b.cy
     end
+
+    table.sort(self.entities, sortEntities)
 
     for i, entity in pairs(self.entities) do
         love.graphics.setColor(entity.color[1], entity.color[2], entity.color[3])
-        if isControlled(entity) then
+        if entity.isControlled then
             love.graphics.setColor(math.abs(entity.color[1]-66), math.abs(entity.color[2]-126), math.abs(entity.color[3]-84))
         end
 
