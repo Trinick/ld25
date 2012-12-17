@@ -20,6 +20,9 @@ function Enemy.new(x, y, width, height, world)
 
     inst.moveSpeed = 5
 
+    table.insert(world.entities, inst)
+    table.insert(world.friendlies, inst)
+
     return inst
 end
 

@@ -14,6 +14,8 @@ function World.new(seed)
 
     local lcg = LCG.new(seed)
     local entities = {}
+    local friendlies = {}
+    local enemies = {}
     local nodes = {}
     local width = 100
     local height = 100
@@ -30,6 +32,8 @@ function World.new(seed)
 
     inst.renderString = ""
     inst.entities = entities
+    inst.friendlies = friendlies
+    inst.enemies = enemies
     inst.nodes = nodes
     inst.lcg = lcg
     inst.tiles = tiles
@@ -54,14 +58,6 @@ function World.new(seed)
                 until not (x + radius > width or y + radius > height or x - radius < 0 or y - radius < 0)
 
                 room = { x = x, y = y, size = size, radius = radius}
-
-                if i == 0 then
-                    inst.player = Friendly.new(x * 32, y * 32, 32, 64)
-                    inst.cameraX = -x * 32
-                    inst.cameraY = -y * 32
-
-                    table.insert(inst.entities, inst.player)
-                end
 
                 local kx = x - radius
                 local ky = y - radius
@@ -148,6 +144,7 @@ function World.new(seed)
             end
         end
     end
+    inst.rooms = rooms
 
     gui.state = "Placing..."
 
@@ -336,7 +333,6 @@ function World.new(seed)
     end
 
     -- Neighorhoo Generation for Navigation Nodes --
-    local ignore = {[inst.entities[1]] = 1}
     local checked = {}
     for a, node in pairs(nodes) do
         checked[a] = {}
@@ -344,7 +340,7 @@ function World.new(seed)
     for a, nodeA in pairs(nodes) do
         for b, nodeB in pairs(nodes) do
             if a ~= b and checked[a][b] == nil then
-                if # raycast(nodeA.x, nodeA.y, nodeB.x, nodeB.y, ignore) == 0 then
+                if # raycast(nodeA.x, nodeA.y, nodeB.x, nodeB.y) == 0 then
                     checked[a][b] = 1
                     checked[b][a] = 1
                     table.insert(nodeA.neighbors, b)
@@ -359,6 +355,14 @@ function World.new(seed)
     inst.tilesBatch = tilesBatch
 
     return inst
+end
+
+function World:populate()
+    local x = self.rooms[1].x
+    local y = self.rooms[1].y
+    local debugPlayer = Friendly.new(x * 32, y * 32, 32, 64)
+    self.cameraX = -x * 32
+    self.cameraY = -y * 32
 end
 
 function World:render()

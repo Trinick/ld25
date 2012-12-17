@@ -16,6 +16,8 @@ function love.load()
     world = World.new(math.ceil(math.random() * 123456789))
     control = Control.new()
 
+    world:populate()
+
     gui:renderMap()
 end
 

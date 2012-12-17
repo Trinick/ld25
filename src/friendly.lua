@@ -33,6 +33,9 @@ function Friendly.new(x, y, width, height)
     inst.collision = collider:addRectangle(x, y, width, height)
     inst.collision.instance = inst
 
+    table.insert(world.entities, inst)
+    table.insert(world.friendlies, inst)
+
     return inst
 end
 

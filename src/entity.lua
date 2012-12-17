@@ -6,7 +6,8 @@ function Entity.new(x, y, width, height, world)
 
     setmetatable(inst, Entity)
 
-    inst.class = "entity"
+    inst.className = "entity"
+    inst.class = 0x00
     inst.entityClass = classMgr.classes[1]
     inst.x = x
     inst.y = y
@@ -15,6 +16,8 @@ function Entity.new(x, y, width, height, world)
     inst.direction = 0
     inst.canBeControlled = false
     inst.cmds = {}
+
+    table.insert(world.entities, inst)
 
     return inst
 end
@@ -92,6 +95,10 @@ function Entity:attack()
     end
 end
 
+function Entity:clearCmds()
+    self.curCmd = nil
+    self.cmds = {}
+end
 function Entity:popCmd(cmd)
     if self.cmds[1] == cmd then
         self.curCmd = nil
@@ -109,6 +116,32 @@ function Entity:processCmds()
 end
 function Entity:think(dt)
     self:processCmds()
+end
+
+function Entity:delete()
+    for a, entity in pairs(world.entities) do
+        if entity == self then
+            table.remove(world.entities, a)
+        end
+    end
+
+    if self.class == 1 then
+        for a, entity in pairs(world.friendlies) do
+            if entity == self then
+                table.remove(world.friendlies, a)
+            end
+        end
+    end
+
+    if self.class == 2 then
+        for a, entity in pairs(world.enemies) do
+            if entity == self then
+                table.remove(world.enemies, a)
+            end
+        end
+    end
+
+    self = nil
 end
 
 return Entity
