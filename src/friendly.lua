@@ -9,15 +9,21 @@ function Friendly.new(x, y, class)
 
     inst.className = "friendly"
     inst.class = 0x01
-    local classNum = 1
-    for i=1, #classMgr.classes, 1 do
-        if(classMgr.classes[i].name == class) then
-            classNum = i
-            break
+    local entityClass = classMgr.classes[1]
+    print(type(class))
+    if type(class) == "string" then
+        local classNum = 1
+        for i=1, #classMgr.classes, 1 do
+            if(classMgr.classes[i].name == class) then
+                classNum = i
+                break
+            end
         end
+        entityClass = classMgr.classes[classNum]
+    else
+        print(class)
+        entityClass = classMgr.classes[class]
     end
-    local entityClass = classMgr.classes[classNum]
-
 
     local width = entityClass.width
     local height = entityClass.height
@@ -27,6 +33,7 @@ function Friendly.new(x, y, class)
     inst.y = y
     inst.width = width
     inst.height = height
+    inst.damage = entityClass.damage
     inst.direction = 0
     inst.step = 1
     inst.stepFrac = 0
@@ -35,12 +42,9 @@ function Friendly.new(x, y, class)
     inst.isControlled = false
     inst.cmds = {}
 
-    inst.moveSpeed = 64
+    inst.moveSpeed = entityClass.moveSpeed
 
-    inst.attackAngle = 0.218165
-    inst.attackDist = 16
-
-    inst.health = 100
+    inst.health = entityClass.health
 
     inst.collision = collider:addRectangle(x, y, width, height)
     inst.collision.instance = inst
@@ -83,7 +87,8 @@ function Friendly:attack()
         enemy = enemy.instance
         if enemy ~= nil then
             if enemy.className == "enemy" then
-                enemy.health = enemy.health - 10
+                enemy.health = enemy.health - self.damage
+                print(enemy.health)
                 if enemy.health < 0 then enemy:delete() end
             end
         end

@@ -8,22 +8,25 @@ function ClassMgr.new()
 
     inst.classes = {}
 
-    inst:initializeClass("spider", "Spider", 64, 64)
+    inst:initializeClass("spider", "Spider", 64, 64, 100, 96, 15)
     --inst:initializeClass("slime", "Slime")
-    inst:initializeClass("skeleton", "Skeleton", 32, 64)
-    inst:initializeClass("ghost", "Ghost", 32, 64)
-    inst:initializeClass("slime", "Slime", 24, 32)
+    inst:initializeClass("skeleton", "Skeleton", 32, 64, 200, 48, 10)
+    inst:initializeClass("ghost", "Ghost", 32, 64, 150, 64, 10)
+    inst:initializeClass("slime", "Slime", 24, 32, 10, 32, 25)
 
-    inst:initializeClass("hero_knight", "HeroKnight", 64, 64)
-    inst:initializeClass("hero_templar","HeroTemplar", 64, 64)
+    inst:initializeClass("hero_knight", "HeroKnight", 64, 64, 100, 64, 10)
+    inst:initializeClass("hero_templar","HeroTemplar", 64, 64, 200, 48, 15)
     return inst
 end
 
-function ClassMgr:initializeClass(id, name, width, height)
+function ClassMgr:initializeClass(id, name, width, height, health, speed, damage)
     local tileset = love.graphics.newImage("art/images/" .. id .. ".png")
     local inst = {}
 
     inst.name = name
+    inst.health = health
+    inst.moveSpeed = speed
+    inst.damage = damage
     inst.width = width
     inst.height = height
     inst.tileset = tileset
