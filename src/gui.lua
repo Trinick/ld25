@@ -67,7 +67,7 @@ function GUI:renderHUD()
         love.graphics.setColor(255, 26, 26)
         love.graphics.rectangle("fill", 78, y + 48, math.ceil(184 * target.health / target.entityClass.health), 12)
         love.graphics.setColor(255, 255, 255) -- TODO: unhardcode for each portrait instead of just spiders
-        love.graphics.draw(class.portrait, 14, y + 30)
+        love.graphics.draw(class.portrait, 7, y)
         love.graphics.setColor(89, 29, 71)
         love.graphics.print(class.name, 79, y + 28)
         love.graphics.setColor(255, 255, 255)
