@@ -73,36 +73,40 @@ function Entity:spawnEnemy()
 end
 
 function Entity:attack()
-    local ignoreSet = {self.collision}
+    local ignoreSet = {[self.collision] = 1}
     for i, entity in pairs(world.entities) do
-        if entity.className ~= "enemy" then
+        if entity.className == nil then
             table.insert(ignoreSet, entity)
-        else
-            print("Enemy!")
+        elseif entity.className ~= "enemy" then
+            table.insert(ignoreSet, entity.collision)
         end
     end
-    local targetX = self.x
-    local targetY = self.y
+    local startX = self.x + (self.width/2)
+    local startY = self.y + (self.height/2)
+    local targetX = startX
+    local targetY = startY
 
     if self.direction == 0 then
-        targetY = self.y + 50
+        targetY = startY + 50
     elseif self.direction == 1 then
-        targetY = self.y - 50
+        targetY = startY - 50
     elseif self.direction == 2 then
-        targetX = self.x + 50
+        targetX = startX + 50
     elseif self.direction == 3 then
-        targetX = self.x - 50
+        targetX = startX - 50
     end
 
-    local retSet = raycast(self.x, self.y, targetX, targetY, ignoreSet)
+    local retSet = raycast(startX, startY, targetX, targetY, ignoreSet)
     if #retSet == 0 then
         return
     end
     for e, enemy in pairs(retSet) do
         enemy = enemy.instance
-        if(enemy.className == "enemy") then
-            enemy.health = enemy.health - 10
-            if enemy.health < 0 then enemy:delete() end
+        if enemy ~= nil then
+            if enemy.className == "enemy" then
+                enemy.health = enemy.health - 10
+                if enemy.health < 0 then enemy:delete() end
+            end
         end
     end
 end
