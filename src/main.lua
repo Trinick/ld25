@@ -86,6 +86,12 @@ end
 
 function love.mousepressed(x, y, button)
     if gui.loaded then
-        control:onClick(x, y, button)
+        control:onMouseDown(x, y, button)
+    end
+end
+
+function love.mousereleased(x, y, button)
+    if gui.loaded then
+        control:onMouseUp(x, y, button)
     end
 end

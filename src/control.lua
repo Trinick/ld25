@@ -113,6 +113,24 @@ function Control:clear()
 end
 
 function Control:update(dt)
+    if self.mouseDown then
+        local width = love.graphics.getWidth()
+        local height = love.graphics.getHeight()
+        local mapX = width - gui.map:getWidth() + 56
+        local mapY = 36
+        local mapWidth = world.width
+        local mapHeight = world.height
+        local x = love.mouse.getX()
+        local y = love.mouse.getY()
+
+        if x > mapX and x < mapX + mapWidth and y > mapY and y < mapY + mapHeight then
+            world.cameraX = (x - mapX) * -32
+            world.cameraY = (y - mapY) * -32
+
+            return 
+        end
+    end
+
     self:moveCheck(dt)
 
     if #self.controlling > 0 and self.center then
@@ -126,20 +144,15 @@ function Control:update(dt)
     end
 end
 
-function Control:onClick(x, y, button)
+function Control:onMouseUp(x, y, button)
+    self.mouseDown = false
+end
+
+function Control:onMouseDown(x, y, button)
+    self.mouseDown = true
+
     local width = love.graphics.getWidth()
     local height = love.graphics.getHeight()
-    local mapX = width - gui.map:getWidth() + 56
-    local mapY = 36
-    local mapWidth = world.width
-    local mapHeight = world.height
-
-    if x > mapX and x < mapX + mapWidth and y > mapY and y < mapY + mapHeight then
-        world.cameraX = (x - mapX) * -32
-        world.cameraY = (y - mapY) * -32
-
-        return 
-    end
 
     x = x - world.cameraX - width / 2
     y = y - world.cameraY - height / 2

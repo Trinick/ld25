@@ -74,7 +74,7 @@ function World:dig()
                     radius = math.floor(size / 2)
                     x = math.floor(lcg:random() * width)
                     y = math.floor(lcg:random() * height)
-                until not (x + radius > width or y + radius > height or x - radius < 0 or y - radius < 0)
+                until not (x + radius + 2 > width or y + radius + 2 > height or x - radius - 2 < 0 or y - radius - 2 < 0)
 
                 room = { x = x, y = y, size = size, radius = radius}
 
