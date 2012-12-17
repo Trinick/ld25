@@ -220,4 +220,16 @@ function Control:onMouseDown(x, y, button)
     end
 end
 
+function Control:isSelected(entity)
+    for i, someEntity in pairs(self.selectedEntities) do
+        if entity == someEntity then
+            return true
+        end
+    end
+    return false
+end
+
+function Control:isControlled(entity)
+    if entity == nil then return false end
+    if entity == self.controlling then return true else return false end
 return Control
