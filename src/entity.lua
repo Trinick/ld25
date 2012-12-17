@@ -114,6 +114,8 @@ function Entity:processCmds()
         self.cmds[1](self)
     end
 end
+function Entity:stop()
+end
 function Entity:think(dt)
     self:processCmds()
 end

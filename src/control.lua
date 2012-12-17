@@ -124,6 +124,8 @@ function Control:onClick(x, y, button)
             if entity.canBeControlled then
                 if entity:collisionCheck(x, y) == 1 then
                     table.insert(self.controlling, entity)
+                    entity:clearCmds()
+                    entity:stop()
                     entity.isControlled = true
                 end
             end
