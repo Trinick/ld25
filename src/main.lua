@@ -39,6 +39,19 @@ function love.draw()
     if gui.loaded then
         if gui.ready then
             world:render()
+            
+            -- Print out selection box
+            if control.selectBox.exists then
+                love.graphics.setColor(255, 255, 255, 255)
+                love.graphics.setLineWidth(2)
+                local x0 = world.cameraX + love.graphics.getWidth() / 2
+                local y0 = world.cameraY + love.graphics.getHeight() / 2
+                local x1 = math.min(control.selectBox.originX, control.selectBox.finalX)
+                local y1 = math.min(control.selectBox.originY, control.selectBox.finalY)
+                local x2 = math.max(control.selectBox.originX, control.selectBox.finalX)
+                local y2 = math.max(control.selectBox.originY, control.selectBox.finalY)
+                love.graphics.rectangle("line", x1 + x0, y1 + y0, x2-x1, y2-y1)
+            end
 
             -- Pathfinding Debug --
             love.graphics.setColor(255, 0, 0, 255)

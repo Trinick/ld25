@@ -9,6 +9,9 @@ function Control.new()
     inst.controlling = {}
     inst.controllingIndex = 1
     inst.moving = false
+    inst.mouseDown = {}
+    inst.selectBox = { exists = false, originX = 0, originY = 0 , finalX = 0, finalY = 0}
+    inst.selectedEntities = {}
 
     return inst
 end
@@ -111,7 +114,7 @@ function Control:clear()
 end
 
 function Control:update(dt)
-    if self.mouseDown then
+    if self.mouseDown["l"] then
         local width = love.graphics.getWidth()
         local height = love.graphics.getHeight()
         local mapX = width - gui.map:getWidth() + 56
@@ -120,6 +123,9 @@ function Control:update(dt)
         local mapHeight = world.height
         local x = love.mouse.getX()
         local y = love.mouse.getY()
+
+        self.selectBox.finalX = x - world.cameraX - width / 2
+        self.selectBox.finalY = y - world.cameraY - height / 2
 
         if x > mapX and x < mapX + mapWidth and y > mapY and y < mapY + mapHeight then
             world.cameraX = (x - mapX) * -32
@@ -141,11 +147,52 @@ function Control:update(dt)
 end
 
 function Control:onMouseUp(x, y, button)
-    self.mouseDown = false
+    self.mouseDown[button] = false
+    
+    local width = love.graphics.getWidth()
+    local height = love.graphics.getHeight()
+    local mapX = width - gui.map:getWidth() + 56
+    local mapY = 36
+    local mapWidth = world.width
+    local mapHeight = world.height
+
+    if x > mapX and x < mapX + mapWidth and y > mapY and y < mapY + mapHeight then
+        return
+    end
+
+    x = x - world.cameraX - width / 2
+    y = y - world.cameraY - height / 2
+    
+    if button == "l" then
+        if self.selectBox.exists == true then
+            self.selectedEntities = {}
+            self.selectBox.finalX = x
+            self.selectBox.finalY = y
+            self.selectBox.exists = false
+            local x1 = math.min(self.selectBox.originX, self.selectBox.finalX)
+            local y1 = math.min(self.selectBox.originY, self.selectBox.finalY)
+            local x2 = math.max(self.selectBox.originX, self.selectBox.finalX)
+            local y2 = math.max(self.selectBox.originY, self.selectBox.finalY)
+            for i, entity in pairs(world.entities) do
+                if entity.canBeControlled and entity:clientBoxCheck(x1, y1, x2, y2) then
+                    table.insert(self.selectedEntities, entity)
+                end
+            end
+            
+            if #(self.selectedEntities) == 1 then
+                local entity = self.selectedEntities[1]
+                self.selectedEntities = {}
+                self.controlling[1] = entity
+                entity:clearCmds()
+                entity:stop()
+                entity.isControlled = true
+            end
+        end
+    end
 end
 
 function Control:onMouseDown(x, y, button)
-    self.mouseDown = true
+    self.mouseDown[button] = true
 
     local width = love.graphics.getWidth()
     local height = love.graphics.getHeight()
@@ -163,20 +210,34 @@ function Control:onMouseDown(x, y, button)
 
     if button == "l" then
         self.controlling = {}
-        for i, entity in pairs(world.entities) do
-            if entity.canBeControlled then
-                if entity:clientCheck(x, y) == 1 then
-                    table.insert(self.controlling, entity)
-                    entity:clearCmds()
-                    entity:stop()
-                    entity.isControlled = true
+        self.selectedEntities = {}
+        self.selectBox.exists = true;
+        self.selectBox.originX = x;
+        self.selectBox.originY = y;
+    end
+
+    -- attempted selection movement --
+    if button == "r" then
+        for i, ent in pairs(self.selectedEntities) do
+            ent:clearCmds()
+            ent:stop()
+            debugObj = ent
+            debugPath = getPath(x, y, ent.cx + 16, ent.cy + 16, {[ent.collision] = 1})
+            if debugPath == nil then
+            elseif debugPath == 0 then
+                ent:pushCmd(entityMoveTo, {x, y, 2})
+            elseif # debugPath > 0 then
+                for a, node in pairs(debugPath) do
+                    ent:pushCmd(entityMoveTo, {world.nodes[node].x, world.nodes[node].y, 4})
                 end
+                ent:pushCmd(entityMoveTo, {x, y, 2})
             end
+            debugPos = {x, y}
         end
     end
 
-    -- Pathfinding Debug --
-    if button == "r" then
+    -- Pathfinding Debug - took this shit out, here for archive --
+    if button == "q" then
         if self.controlling[1] ~= nil then
             if self.controlling[1] ~= 0 then
                 if self.controlling[1].cx ~= nil then
