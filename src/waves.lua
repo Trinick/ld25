@@ -50,7 +50,6 @@ end
 function WaveMgr:update(dt)
 	if self.timeRunning == 0 then return end
 	self.currentTime = self.currentTime + dt
-	print(self.currentTime .. " " .. self.waveTimeout * (self.currentWave-1))
 	if self.currentTime >= self.waveTimeout * (self.currentWave-1) then
 		self.currentTime = self.waveTimeout * (self.currentWave-1)
 		self.currentWave = self.currentWave + 1
