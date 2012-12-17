@@ -220,3 +220,5 @@ function Control:onMouseDown(x, y, button)
         end
     end
 end
+
+return Control
