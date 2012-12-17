@@ -1,4 +1,4 @@
-# LD25
+# Phaedra
 
 ## Synopsis
 
@@ -52,11 +52,11 @@ You must follow the code style guidelines:
 ### Windows
 
 1. `util/dist.bat` will zip all of the source into a .love file, turn it into an executable and then run it
-2. `dist/ld25.exe` will be the distributable executable
+2. `dist/phaedra.exe` will be the distributable executable
 3. All DLLs needed when distributing should be in the `deps` directory
 
 ### Linux
 
 1. `util/dist.sh` will zip all of the source into a .love file, turn it into an executable and then run it
-2. `dist/ld25` will be the distributable executable
+2. `dist/phaedra` will be the distributable executable
 3. All shared libraries needed to run, should in most cases, be installed by the package manager and not handled by us
