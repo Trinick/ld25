@@ -320,7 +320,7 @@ function entityPatrol(entity, dt, args)
                 dist = math.sqrt(math.pow(entity.cx - x, 2) + math.pow(entity.cy - y, 2))
             end
 
-            if dist <= 320 then
+            if dist <= 32 then
                 entity.targetRoom = nil
                 entity.movePos = nil
             end
