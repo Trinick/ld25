@@ -16,6 +16,7 @@ function ClassMgr.new()
 
     inst:initializeClass("hero_knight", "HeroKnight", 64, 64, 100, 64, 10, 30, 30, -32, -48)
     inst:initializeClass("hero_templar","HeroTemplar", 64, 64, 200, 48, 15, 30, 30, -32, -48)
+
     return inst
 end
 
@@ -53,6 +54,9 @@ function ClassMgr:initializeClass(id, name, width, height, health, speed, damage
             table.insert(list[y + 1], quad)
         end
     end
+end
+
+function ClassMgr:random()
 end
 
 return ClassMgr

@@ -12,8 +12,11 @@ function GUI.new()
     inst.skull = love.graphics.newImage("art/images/skull.png")
     inst.status = love.graphics.newImage("art/images/status.png")
     inst.map = love.graphics.newImage("art/images/map.png")
+    inst.progress = love.graphics.newImage("art/images/progress.png")
+    inst.progressSep = love.graphics.newImage("art/images/progress_sep.png")
     inst.mapCanvas = nil
     inst.tip = nil
+    inst.waveNotification = nil
 
     return inst
 end
@@ -31,6 +34,10 @@ function GUI:renderMap()
             end
         end
     end)
+end
+
+function GUI:notifyWave(x, y)
+    self.waveNotification = {x = x, y = y, step = 0}
 end
 
 function GUI:renderLoading()
@@ -58,6 +65,7 @@ function GUI:renderHUD()
     local width = love.graphics.getWidth()
     local height = love.graphics.getHeight()
     local target = control.controlling
+    local notification = self.waveNotification
 
     if target then
         local class = target.entityClass
@@ -92,6 +100,27 @@ function GUI:renderHUD()
     love.graphics.setColor(255, 255, 255)
     love.graphics.setLineWidth(1)
     love.graphics.rectangle("line", math.floor(x + 56 + (-world.cameraX - width / 2) / 32), math.floor((-world.cameraY - height / 2) / 32 + 36), math.floor(width / 32), math.floor(height / 32))
+
+    if notification then
+        love.graphics.setColor(225, 0, 0)
+        love.graphics.print("!", x + 56 + notification.x - 1, 32 + notification.y - 1)
+    end
+
+    if world.waveMgr then
+        local enemies = world.waveMgr.total - world.waveMgr.dispatched + #world.enemies
+        local total = enemies + #world.friendlies
+        local heroWidth = math.ceil((enemies / total) * 184)
+        local minionWidth = math.ceil((#world.friendlies / total) * 184)
+
+        love.graphics.setColor(255, 255, 255)
+        love.graphics.draw(self.progress, 10, 5)
+        love.graphics.setColor(255, 26, 26)
+        love.graphics.rectangle("fill", 42, 21, minionWidth, 12)
+        love.graphics.setColor(31, 133, 255)
+        love.graphics.rectangle("fill", 42 + minionWidth, 21, heroWidth, 12)
+        love.graphics.setColor(255, 255, 255)
+        love.graphics.draw(self.progressSep, 42 + minionWidth - 5, 11)
+    end
 end
 
 function GUI:render()
@@ -108,6 +137,17 @@ function GUI:render()
 end
 
 function GUI:update(dt)
+    if self.ready then
+        local notification = self.waveNotification
+
+        if notification then
+            notification.step = notification.step + dt
+
+            if notification.step >= 3 then
+                self.waveNotification = nil
+            end
+        end
+    end
 end
 
 return GUI

@@ -2,7 +2,7 @@ Entity = require "entity"
 Friendly = require "friendly"
 Enemy = require "enemy"
 LCG = require "lcg"
-AudioCtl = require "audio"
+AudioMgr = require "audio"
 
 World = {}
 World.__index = World
@@ -12,8 +12,8 @@ function World.new(seed)
 
     setmetatable(inst, World)
 
-    inst.audioCtlr = AudioCtl.new()
-    inst.audioCtlr:playFromTheme("easy_dungeon")
+    inst.audioMgr = AudioMgr.new()
+    inst.audioMgr:playFromTheme("easy_dungeon")
     inst.entities = {}
     inst.friendlies = {}
     inst.enemies = {}
@@ -518,24 +518,29 @@ function World:finalize()
 end
 
 function World:populate()
-    local x = self.rooms[1].x
-    local y = self.rooms[1].y
-    local debugPlayer = Friendly.new(x * 32 + 16, y * 32 + 16, "Spider")
-    for room=2, #self.rooms, 1 do
-        x = self.rooms[room].x
-        y = self.rooms[room].y
-        Friendly.new(x * 32 + 16, y * 32 + 16, (math.floor(world.lcg:random()*10)%5)+1)
+    local lcg = self.lcg
+    local mobs = #self.rooms * 4
+    local minionBatch = math.floor(mobs / #self.rooms)
+
+    for _, room in pairs(self.rooms) do
+        for i = 1, minionBatch do
+            local x = room.x - room.radius + math.floor(lcg:random() * room.size)
+            local y = room.y - room.radius + math.floor(lcg:random() * room.size)
+
+            Friendly.new(x * 32 + 16, y * 32 + 16, (math.floor(world.lcg:random() * 10) % 4) + 1)
+        end
     end
 
-    for i=0,#self.rooms/4,1 do
-        local ranroom = self.rooms[math.floor(((world.lcg:random() * 10) % (#self.rooms-1)) + 1)]
-        local enemyx = ranroom.x
-        local enemyy = ranroom.y
-        wavectrl:addSpawnPoint(enemyx, enemyy)
-    end
-    
-    self.cameraX = -x * 32
-    self.cameraY = -y * 32
+    local heroSpawnCount = math.ceil(#self.rooms / 4)
+    local heroSpawns = {}
+
+    repeat
+        table.insert(heroSpawns, self.rooms[math.ceil(lcg:random() * #self.rooms)])
+    until #heroSpawns >= heroSpawnCount
+
+    self.waveMgr = WaveMgr.new(mobs, heroSpawns)
+    self.cameraX = -self.rooms[1].x * 32
+    self.cameraY = -self.rooms[1].y * 32
 end
 
 function World:render()
@@ -574,8 +579,13 @@ function World:update(dt)
     for a, entity in pairs(self.entities) do
         entity:update(dt)
     end
+
     for a, entity in pairs(self.entities) do
         entity:think(dt)
+    end
+
+    if self.waveMgr then
+        self.waveMgr:update(dt)
     end
 end
 
