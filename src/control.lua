@@ -59,6 +59,11 @@ function Control:moveCheck(dt)
                 entity.stepFrac = entity.stepFrac + (dt*4)
             end
 
+            if ens == 0 and eew == 0 then
+                entity.stepFrac = 0
+                entity.step = 1
+            end
+
             if entity.collision ~= nil then
                 entity.collision:move(eew, ens)
             end
