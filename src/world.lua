@@ -52,7 +52,7 @@ function World:dig()
     local height = self.height
     local rooms = self.rooms
     local lcg = self.lcg
-    local count = 8 + math.floor(lcg:random() * (width + height) / 2)
+    local count = 16 + math.floor(lcg:random() * (width + height) / 2) * 2
 
     for x = 1, width do
         for y = 1, height, 1 do
@@ -218,8 +218,13 @@ function World:place()
                 end
 
                 tilesBatch:addq(tilesetQuads.floor, x * 32, y * 32)
+            elseif (not south and not north) or (not east and not west) then
+                -- Clear 1x walls cause they look shit
+                self:setTile(x, y, true)
+                tilesBatch:addq(tilesetQuads.floor, x * 32, y * 32)
             else
                 setWall(x, y)
+
                 if not south then
                     tilesBatch:addq(tilesetQuads.wall, x * 32, y * 32)
                 elseif (not north or not east or not south or not west) or
