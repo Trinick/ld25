@@ -90,7 +90,7 @@ function Friendly:attack()
                     enemy.color = {255, 96, 96}
                 end
                 local damage = self.damage
-                if self == control.controlling[1] then
+                if self == control.selectedEntities[1] then
                     damage = damage * 2
                 end
                 enemy.health = enemy.health - damage
