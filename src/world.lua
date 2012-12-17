@@ -52,7 +52,7 @@ function World:dig()
     local height = self.height
     local rooms = self.rooms
     local lcg = self.lcg
-    local roomCount = 16 + math.floor(lcg:random() * (width + height) / 2) * 2
+    local roomCount = 16 + math.floor(lcg:random() * (width + height) / 2) * 4
 
     -- Initialize the initial tilemap to all solid
     for x = 1, width do
@@ -172,6 +172,7 @@ function World:place()
         return love.graphics.newQuad(x * 32, y * 32, 32, 32, tileset:getWidth(), tileset:getHeight())
     end
 
+    local lcg = self.lcg
     local nodes = self.nodes
     local width = self.width
     local height = self.height
@@ -180,10 +181,22 @@ function World:place()
         wallLeft = tile(4, 0),
         wallRight = tile(4, 2),
         roof = tile(5, 3),
-        floor = tile(0, 1)
+        floor = tile(0, 1),
+        rock1 = tile(0, 2),
+        rock2 = tile(0, 3),
+        rock3 = tile(0, 4)
     }
     local tilesBatch = love.graphics.newSpriteBatch(tileset, width * self.height)
     local walls = {}
+    local dirt = {}
+
+    function setDirt(x, y)
+        dirt[x .. "_" .. y] = true
+    end
+
+    function isDirt(x, y)
+        return dirt[x .. "_" .. y] == true
+    end
 
     function setWall(x, y)
         walls[x .. "_" .. y] = true
@@ -224,6 +237,10 @@ function World:place()
                 end
 
                 tilesBatch:addq(tilesetQuads.floor, x * 32, y * 32)
+
+                if lcg:random() >= 0.992 then
+                    tilesBatch:addq(tilesetQuads["rock" .. math.ceil(lcg:random() * 3)], x * 32, y * 32)
+                end
             elseif (not south and not north) or (not east and not west) then
                 -- Clear 1x walls cause they look shit
                 self:setTile(x, y, true)
