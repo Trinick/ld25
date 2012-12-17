@@ -11,6 +11,11 @@ function ClassMgr.new()
     inst:initializeClass("spider", "Spider", 64, 64)
     --inst:initializeClass("slime", "Slime")
     inst:initializeClass("skeleton", "Skeleton", 32, 64)
+    inst:initializeClass("ghost", "Ghost", 32, 64)
+    inst:initializeClass("slime", "Slime", 24, 32)
+
+    inst:initializeClass("hero_knight", "HeroKnight", 64, 64)
+    inst:initializeClass("hero_templar","HeroTemplar", 64, 64)
     return inst
 end
 
