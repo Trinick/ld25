@@ -147,9 +147,9 @@ function Entity:delete()
     end
 
     if self.isControlled then
-        for a, entity in pairs(self.controlling) do
+        for a, entity in pairs(control.controlling) do
             if entity == self then
-                table.remove(self.controlling, a)
+                table.remove(control.controlling, a)
             end
         end
     end
