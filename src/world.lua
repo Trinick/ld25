@@ -518,8 +518,16 @@ function World:finalize()
 end
 
 function World:populate()
+    local heroSpawnCount = math.ceil(#self.rooms / 4)
+    local heroSpawns = {}
     local lcg = self.lcg
     local mobs = #self.rooms * 4
+
+    repeat
+        mobs = mobs + 1
+    until (mobs / heroSpawnCount == math.floor(mobs / heroSpawnCount)) and
+          (mobs / #self.rooms == math.floor(mobs / #self.rooms))
+
     local minionBatch = math.floor(mobs / #self.rooms)
 
     for _, room in pairs(self.rooms) do
@@ -531,9 +539,6 @@ function World:populate()
             friend:pushCmd(entityPatrol, {true, 128, 18, 3})
         end
     end
-
-    local heroSpawnCount = math.ceil(#self.rooms / 4)
-    local heroSpawns = {}
 
     repeat
         table.insert(heroSpawns, self.rooms[math.ceil(lcg:random() * #self.rooms)])

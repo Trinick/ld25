@@ -24,7 +24,15 @@ function WaveMgr:update(dt)
 		self.dispatchStep = self.dispatchStep + dt
 
 		if math.floor(self.dispatchStep) > old then
-			local enemy = Enemy.new(spawn.x * 32, spawn.y * 32, "HeroKnight")
+			local class
+
+			if world.lcg:random() >= 0.6 then
+				class = "HeroTemplar"
+			else
+				class = "HeroKnight"
+			end
+
+			local enemy = Enemy.new(spawn.x * 32, spawn.y * 32, class)
 
 			self.dispatched = self.dispatched + 1
 

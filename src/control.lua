@@ -129,7 +129,7 @@ function Control:update(dt)
 
     if self.controlling ~= nil then
         local target = self.controlling
-        print(target)
+
         world.cameraX = -target.cx
         world.cameraY = -target.cy
     end
