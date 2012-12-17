@@ -106,6 +106,8 @@ function Entity:processCmds(dt)
     end
 end
 function Entity:stop()
+    self.step = 1
+    self.stepFrac = 0
 end
 function Entity:think(dt)
     self:processCmds(dt)
@@ -122,6 +124,7 @@ function entityMoveTo(entity, dt, args)
     local len = math.sqrt(math.pow(dx, 2) + math.pow(dy, 2))
 
     if len <= minDist then
+        entity:stop()
         entity:popCmd(entityMoveTo)
     else
         dx = dx / len
@@ -140,6 +143,8 @@ function entityMoveTo(entity, dt, args)
                 entity.direction = 3
             end
         end
+
+        entity.stepFrac = entity.stepFrac + dt * 4
 
         entity.collision:move(dt * dx * entity.moveSpeed, dt * dy * entity.moveSpeed)
         local cx, cy = entity.collision:center()
