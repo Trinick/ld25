@@ -360,7 +360,7 @@ function World:place()
         local height = (r.end_y - r.start_y + 1) * 32
 
         local box = collider:addRectangle(start_x, start_y, width, height)
-
+        box.isWall = true
         collider:setPassive(box)
     end
 

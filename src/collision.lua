@@ -1,9 +1,19 @@
 HC = require "hardoncollider"
 
 function onCollision(dt, shapeA, shapeB, mtvX, mtvY)
-    shapeA:move(mtvX, mtvY)
-    shapeA.instance.x = shapeA.instance.x + mtvX
-    shapeA.instance.y = shapeA.instance.y + mtvY
+    if shapeB.isWall then
+        shapeA:move(mtvX, mtvY)
+        shapeA.instance.x = shapeA.instance.x + mtvX
+        shapeA.instance.y = shapeA.instance.y + mtvY
+    else
+        shapeA:move(mtvX / 2, mtvY / 2)
+        shapeA.instance.x = shapeA.instance.x + mtvX / 2
+        shapeA.instance.y = shapeA.instance.y + mtvY / 2
+
+        shapeB:move(-mtvX / 2, -mtvY / 2)
+        shapeB.instance.x = shapeB.instance.x - mtvX / 2
+        shapeB.instance.y = shapeB.instance.y - mtvY / 2
+    end
 end
 
 function onCollisionStop(dt, shape_a, shape_b)
