@@ -541,7 +541,7 @@ function World:populate()
             local x = room.x - room.radius + math.floor(lcg:random() * room.size)
             local y = room.y - room.radius + math.floor(lcg:random() * room.size)
 
-            Friendly.new(x * 32 + 16, y * 32 + 16, (math.floor(world.lcg:random() * 10) % 4) + 1)
+            Friendly.new(x * 32 + 16, y * 32 + 16, (math.floor(world.lcg:random() * 10) % 5) + 1)
         end
     end
 
