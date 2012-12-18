@@ -121,7 +121,7 @@ function Entity:think(dt)
         if # self.cmds == 0 then
 
             if self.moveTime > 5 then
-                self.stop()
+                self:stop()
 
                 if self.class == 2 then
                     self.targetRoom = nil
@@ -239,7 +239,7 @@ function Entity:think(dt)
                     y = self.movePos[2]
                     dist = math.sqrt(math.pow(self.cx - x, 2) + math.pow(self.cy - y, 2))
                     if dist < 2 then
-                        self.movePos = nil
+                        self:stop()
                     else
                         entityMoveTo(self, dt, {self.movePos[1], self.movePos[2], 2})
                         self.moveTime = self.moveTime + dt
