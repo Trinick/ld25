@@ -327,13 +327,13 @@ function entityAttack(entity, dt, args)
             target.health = target.health - entity.damage
             if target.health < 0 then
                 target:delete()
-                world.audioMgr:playSound("die")
+                world.audioMgr:playSoundFrom("die", target.cx, target.cy)
                 if # entity.cmds > 0  then
                     entity:stop()
                     entity:popCmd(entityAttack)
                 end
             else
-                world.audioMgr:playSound("hit")
+                world.audioMgr:playSoundFrom("hit", target.cx, target.cy)
             end
         end
     end
