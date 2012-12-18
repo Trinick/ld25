@@ -14,6 +14,7 @@ function GUI.new()
     inst.map = love.graphics.newImage("art/images/map.png")
     inst.progress = love.graphics.newImage("art/images/progress.png")
     inst.progressSep = love.graphics.newImage("art/images/progress_sep.png")
+    inst.logo = love.graphics.newImage("art/images/logo.png")
     inst.mapCanvas = nil
     inst.tip = nil
     inst.waveNotification = nil
@@ -50,6 +51,7 @@ function GUI:renderLoading()
     local tipWidth = font:getWidth(tip)
 
     love.graphics.setColor(255, 255, 255)
+    love.graphics.draw(self.logo, 0, 7)
     love.graphics.draw(self.skull, width / 2 - self.skull:getWidth() / 2, height / 2 - self.skull:getHeight() / 2)
     love.graphics.print(tip, width / 2 - tipWidth / 2, height / 2 + self.skull:getHeight() * 7 / 6)
 
