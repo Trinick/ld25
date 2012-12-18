@@ -8,7 +8,16 @@ WaveMgr = require "waves"
 
 tips = {
     "PROTIP: You're not a villain unless your minions die for you.",
-    "PROTIP: Having unsafe sex can result in STIs."
+    "PROTIP: Heroes are stronger than minions, so play strategically.",
+    "PROTIP: Click and drag to select minions and then right click to direct them.",
+    "PROTIP: Clicking on a minion allows you control them with the WASD keys.",
+    "PROTIP: WASD will move the camera if you haven't selected anything.",
+    "PROTIP: Skeletons are the strongest minion but are incredibly slow.",
+    "PROTIP: Ghosts have a good balance of strength and speed.",
+    "PROTIP: Bats are the fastest minion and also the weakest.",
+    "PROTIP: Controlling minions directly buffs their strength and speed.",
+    "PROTIP: The escape key will deselect and uncontrol all minions.",
+    "PROTIP: The shift key makes the camera move faster."
 }
 
 function love.load()
