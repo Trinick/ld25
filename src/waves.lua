@@ -46,7 +46,7 @@ function WaveMgr:update(dt)
 		if #world.enemies == 0 then
 			if self.dispatched >= self.total then
 				gui.over = true
-				gui.won = false
+				gui.won = true
 			else
 				local spawn = self.spawns[1]
 			
