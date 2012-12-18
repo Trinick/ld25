@@ -8,7 +8,6 @@
 ---     If SOUNDNAME does not exist it will just play a placeholder pop
 ---     sound effect.
 ---
----     Music coming soon. 
 
 AudioMgr = {}
 AudioMgr.__index = AudioMgr
@@ -22,6 +21,9 @@ function AudioMgr.new()
     inst.globalSfxVolume = 1.0
     inst.sfxVolumes = {}
     inst.sfx = {}
+    inst.listenerX = 0
+    inst.listenerY = 0
+    inst.DISTANCE_CONSTANT = 700
     inst:loadAllSfx()
 
     inst.nowPlaying = nil
@@ -99,17 +101,22 @@ function AudioMgr:setMusicVolume(vol)
     self.globalMusicVolume = vol
 end
 
+--- Sets the X and Y coordinates of the audio "listener", used for SFX.
+function AudioMgr:setListenerPos(x, y)
+    self.listenerX = x
+    self.listenerY = y
+end
+
 --- Plays sound effect NAME once. If no such sound is found, plays a default sound
 --  effect.
 function AudioMgr:playSound(name)
-    sound = nil
-    volume = 1.0
+    local sound = nil
+    local volume = 1.0
 
     for soundName, soundObj in pairs(self.sfx) do
         if soundName == name then
             sound = soundObj
             volume = self.sfxVolumes[soundName]
-
             break
         end
     end
@@ -122,6 +129,24 @@ function AudioMgr:playSound(name)
     sound:setVolume(self.globalSfxVolume * volume)
     love.audio.rewind(sound)
     love.audio.play(sound)
+    return sound
+end
+
+--- Plays sound NAME as if it was coming from position (x, y).
+function AudioMgr:playSoundFrom(name, x, y)
+    local sound = self:playSound(name)
+    local reduction = self:getVolumeReduction(x, y)
+    sound:setVolume(sound:getVolume() * reduction)
+    return sound
+end
+
+
+--- Get the volume reduction factor from (X, Y) to the listener position.
+function AudioMgr:getVolumeReduction(x, y)
+    local dx = x - self.listenerX
+    local dy = y - self.listenerY
+    local dist = math.sqrt(dx * dx + dy * dy)
+    return math.exp( -dist / self.DISTANCE_CONSTANT)
 end
 
 --- Loops the song SONG. Stops any currently playing song. Does nothing if
@@ -143,6 +168,7 @@ function AudioMgr:playSong(song)
     love.audio.rewind(sound)
     love.audio.play(sound)
     self.nowPlaying = sound
+    return sound
 end
 
 --- Loops a random song from theme THEME.
@@ -159,14 +185,14 @@ end
 --- Pauses BGM.
 function AudioMgr:stopMusic()
     if self.nowPlaying ~= nil then
-        love.audio.stop(self.nowPlaying)
+        self.nowPlaying:pause()
     end
 end
 
 --- Resumes BGM, hopefully.
 function AudioMgr:resumeMusic()
     if self.nowPlaying ~= nil then
-        love.audio.play(self.nowPlaying)
+        self.nowPlaying:play()
     end
 end
 

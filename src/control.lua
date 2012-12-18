@@ -88,6 +88,9 @@ function Control:moveCheck(dt)
 
     world.cameraX = world.cameraX + screenDx
     world.cameraY = world.cameraY + screenDy
+    if world ~= nil and world.audioMgr ~= nil then
+        world.audioMgr:setListenerPos(-world.cameraX, -world.cameraY)
+    end
 end
 
 function Control:clear()
