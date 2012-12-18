@@ -173,7 +173,7 @@ function Entity:think(dt)
                         dx = dx / len
                         dy = dy / len
 
-                        if math.abs(dy) >= math.abs(dx) then
+                        if math.ceil(math.abs(dy)) >= math.floor(math.abs(dx)) then
                             if dy >= 0 then
                                 self.direction = 0
                             else
@@ -357,7 +357,7 @@ function entityMoveTo(entity, dt, args)
         dx = dx / len
         dy = dy / len
 
-        if math.abs(dy) > math.abs(dx) then
+        if math.ceil(math.abs(dy)) >= math.floor(math.abs(dx)) then
             if dy >= 0 then
                 entity.direction = 0
             else
