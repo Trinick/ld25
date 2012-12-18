@@ -188,7 +188,7 @@ function Control:onMouseDown(x, y, button)
     local mapHeight = world.height
 
     if x > mapX and x < mapX + mapWidth and y > mapY and y < mapY + mapHeight then
-        control.controlling = nil
+        self:clear()
         return
     end
 
