@@ -8,14 +8,14 @@ function ClassMgr.new()
 
     inst.classes = {}
 
-    inst:initializeClass("spider", "Spider", 64, 64, 100, 96, 15, 30, 30, -32, -32, 1)
-    inst:initializeClass("skeleton", "Skeleton", 32, 64, 200, 48, 10, 30, 30, -16, -48, 1)
-    inst:initializeClass("ghost", "Ghost", 32, 64, 150, 80, 10, 30, 30, -16, -48, 1)
-    inst:initializeClass("slime", "Slime", 24, 32, 10, 32, 25, 24, 24, -12, -16, 1)
-    inst:initializeClass("bat", "Bat", 64, 32, 50, 96, 8, 32, 16, -32, -16, 1)
+    inst:initializeClass("spider", "Spider", 64, 64, 80, 100, 11, 30, 30, -32, -32, 1)
+    inst:initializeClass("skeleton", "Skeleton", 32, 64, 180, 55, 17, 30, 30, -16, -48, 1)
+    inst:initializeClass("ghost", "Ghost", 32, 64, 110, 80, 14, 30, 30, -16, -48, 1)
+    inst:initializeClass("slime", "Slime", 24, 32, 40, 45, 25, 24, 24, -12, -16, 1)
+    inst:initializeClass("bat", "Bat", 64, 32, 50, 100, 8, 32, 16, -32, -16, 1)
 
-    inst:initializeClass("hero_knight", "HeroKnight", 64, 64, 100, 64, 10, 30, 30, -32, -48, 0.5)
-    inst:initializeClass("hero_templar","HeroTemplar", 64, 64, 200, 48, 15, 30, 30, -32, -48, 0.5)
+    inst:initializeClass("hero_knight", "HeroKnight", 64, 64, 190, 55, 10, 30, 30, -32, -48, 0.5)
+    inst:initializeClass("hero_templar","HeroTemplar", 64, 64, 110, 65, 15, 30, 30, -32, -48, 0.5)
 
     return inst
 end
