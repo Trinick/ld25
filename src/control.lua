@@ -165,6 +165,8 @@ function Control:onMouseUp(x, y, button)
             for i, entity in pairs(world.entities) do
                 if entity.canBeControlled and entity:clientBoxCheck(x1, y1, x2, y2) then
                     entity.isSelected = true
+                    entity:clearCmds()
+                    entity:stop()
                     table.insert(self.selectedEntities, entity)
                 end
             end
@@ -172,8 +174,6 @@ function Control:onMouseUp(x, y, button)
             if #(self.selectedEntities) == 1 then
                 local entity = self.selectedEntities[1]
                 self.controlling = entity
-                entity:clearCmds()
-                entity:stop()
                 entity.isControlled = true
             end
         end

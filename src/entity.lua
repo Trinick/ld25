@@ -110,10 +110,10 @@ function Entity:think(dt)
 
         local enemies = self:detectEnemies(320)
         if # enemies > 0 then
-            entityMoveTo(self, dt, {enemies[1].instance.cx, enemies[1].instance.cy, 32})
+            entityMoveTo(self, dt, {enemies[1].instance.cx, enemies[1].instance.cy, 64})
             entityAttack(self, dt, {enemies[1].instance})
 
-            if # self.cmds then
+            if # self.cmds > 0 then
                 self:clearCmds()
                 self:stop()
             end
@@ -174,13 +174,13 @@ function Entity:think(dt)
                         dy = dy / len
 
                         if math.ceil(math.abs(dy)) >= math.floor(math.abs(dx)) then
-                            if dy >= 0 then
+                            if math.floor(dy) >= 0 then
                                 self.direction = 0
                             else
                                 self.direction = 1
                             end
                         else
-                            if dx >= 0 then
+                            if math.floor(dx) >= 0 then
                                 self.direction = 2
                             else
                                 self.direction = 3
@@ -358,13 +358,13 @@ function entityMoveTo(entity, dt, args)
         dy = dy / len
 
         if math.ceil(math.abs(dy)) >= math.floor(math.abs(dx)) then
-            if dy >= 0 then
+            if math.floor(dy) >= 0 then
                 entity.direction = 0
             else
                 entity.direction = 1
             end
         else
-            if dx >= 0 then
+            if math.floor(dx) >= 0 then
                 entity.direction = 2
             else
                 entity.direction = 3
