@@ -51,7 +51,7 @@ function GUI:renderLoading()
     local tipWidth = font:getWidth(tip)
 
     love.graphics.setColor(255, 255, 255)
-    love.graphics.draw(self.logo, 0, 7)
+    love.graphics.draw(self.logo, 10, 10)
     love.graphics.draw(self.skull, width / 2 - self.skull:getWidth() / 2, height / 2 - self.skull:getHeight() / 2)
     love.graphics.print(tip, width / 2 - tipWidth / 2, height / 2 + self.skull:getHeight() * 7 / 6)
 
