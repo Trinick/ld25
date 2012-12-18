@@ -96,12 +96,13 @@ function Entity:stop()
     self.waitTime = 0
     self.attackTimeout = 0
     self.movePos = nil
-    self.moveTime = 0
+    self.dragTime = 0
+    self.colCheck = nil
 end
 function Entity:think(dt)
     if not self.isControlled and not self.isSelected then
-        if self.moveTime == nil then
-            self.moveTime = 0
+        if self.dragTime == nil then
+            self.dragTime = 0
         end
         if self.waitTime == nil then
             self.waitTime = 0
@@ -112,15 +113,21 @@ function Entity:think(dt)
             entityMoveTo(self, dt, {enemies[1].instance.cx, enemies[1].instance.cy, 32})
             entityAttack(self, dt, {enemies[1].instance})
 
-            self:clearCmds()
-            self:stop()
+            if # self.cmds then
+                self:clearCmds()
+                self:stop()
+            end
+
+            if self.movePos ~= nil then
+                self:stop()
+            end
 
             return
         end
 
         if # self.cmds == 0 then
 
-            if self.moveTime > 5 then
+            if self.dragTime > 5 then
                 self:stop()
 
                 if self.class == 2 then
@@ -185,7 +192,6 @@ function Entity:think(dt)
                         local cx, cy = self.collision:center()
                         self.cx = cx
                         self.cy = cy
-                        self.moveTime = self.moveTime + dt
                     end
                 end
             end
@@ -242,9 +248,13 @@ function Entity:think(dt)
                         self:stop()
                     else
                         entityMoveTo(self, dt, {self.movePos[1], self.movePos[2], 2})
-                        self.moveTime = self.moveTime + dt
                     end
                 end
+            end
+
+            if self.movePos ~= nil and self.colCheck then
+                self.colCheck = nil
+                self.dragTime = self.dragTime + dt
             end
         end
     end
@@ -252,13 +262,19 @@ function Entity:think(dt)
     self:processCmds(dt)
 end
 function Entity:onHitWall()
-    if self.isPatrolling and self.patrolPos ~= nil then
-        self:stop()
+    if self.movePos ~= nil then
+        self.colCheck = true
+        if self.class == 1 then
+            self:stop()
+        end
     end
 end
 function Entity:onHitEntity(entity)
-    if self.isPatrolling and self.patrolPos ~= nil then
-        self:stop()
+    if self.movePos ~= nil then
+        self.colCheck = true
+        if self.class == 1 then
+            self:stop()
+        end
     end
 end
 function Entity:detectEnemies(range)
