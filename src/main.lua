@@ -91,6 +91,7 @@ function love.keypressed(button)
         gui.ready = false
         gui.loaded = false
         gui.over = false
+        world.waveMgr = nil
 
         world:clear()
         world:populate()

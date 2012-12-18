@@ -518,12 +518,14 @@ function World:finalize()
 end
 
 function World:clear()
-    for _, entity in pairs(self.entities) do
-        entity:delete()
+    while self.entities[1] do
+        self.entities[1]:delete()
     end
 end
 
 function World:populate()
+    if self.waveMgr then return end
+
     local heroSpawnCount = math.ceil(#self.rooms / 4)
     local heroSpawns = {}
     local lcg = self.lcg
@@ -552,6 +554,8 @@ function World:populate()
     self.waveMgr = WaveMgr.new(mobs, heroSpawns)
     self.cameraX = -self.rooms[1].x * 32
     self.cameraY = -self.rooms[1].y * 32
+
+    print(#self.friendlies .. " minions")
 end
 
 function World:render()
