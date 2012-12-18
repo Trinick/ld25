@@ -572,6 +572,9 @@ function World:render()
 
     for i, entity in pairs(self.entities) do
         love.graphics.setColor(entity.color[1], entity.color[2], entity.color[3])
+        if entity.isSelected then
+            love.graphics.setColor(math.abs(entity.color[1]-159), math.abs(entity.color[2]-66), math.abs(entity.color[3]-159))
+        end
         if entity.isControlled then
             love.graphics.setColor(math.abs(entity.color[1]-66), math.abs(entity.color[2]-126), math.abs(entity.color[3]-84))
         end
