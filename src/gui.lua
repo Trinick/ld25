@@ -14,7 +14,7 @@ function GUI.new()
     inst.map = love.graphics.newImage("art/images/map.png")
     inst.progress = love.graphics.newImage("art/images/progress.png")
     inst.progressSep = love.graphics.newImage("art/images/progress_sep.png")
-    inst.logo = love.graphics.newImage("art/images/logo.png")
+    inst.logo = love.graphics.newImage("art/images/centhra.png")
     inst.mapCanvas = nil
     inst.tip = nil
     inst.waveNotification = nil
