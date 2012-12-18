@@ -95,9 +95,14 @@ function Entity:stop()
     self.stepFrac = 0
     self.waitTime = 0
     self.attackTimeout = 0
+    self.movePos = nil
+    self.moveTime = 0
 end
 function Entity:think(dt)
     if not self.isControlled and not self.isSelected then
+        if self.moveTime == nil then
+            self.moveTime = 0
+        end
         if self.waitTime == nil then
             self.waitTime = 0
         end
@@ -109,12 +114,20 @@ function Entity:think(dt)
 
             self:clearCmds()
             self:stop()
-            self.movePos = nil
 
             return
         end
 
         if # self.cmds == 0 then
+
+            if self.moveTime > 5 then
+                self.stop()
+
+                if self.class == 2 then
+                    self.targetRoom = nil
+                end
+            end
+
             if self.class == 1 then
                 local maxPatrolDist = 128
                 local maxWaitTime = 3
@@ -172,6 +185,7 @@ function Entity:think(dt)
                         local cx, cy = self.collision:center()
                         self.cx = cx
                         self.cy = cy
+                        self.moveTime = self.moveTime + dt
                     end
                 end
             end
@@ -228,6 +242,7 @@ function Entity:think(dt)
                         self.movePos = nil
                     else
                         entityMoveTo(self, dt, {self.movePos[1], self.movePos[2], 2})
+                        self.moveTime = self.moveTime + dt
                     end
                 end
             end
