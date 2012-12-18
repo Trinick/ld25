@@ -416,6 +416,18 @@ function Entity:update(dt)
             self.damageblinkend = nil
         end
     end
+
+    local maxHealth = self.entityClass.health
+
+    if self.health <= maxHealth then
+        local scale = 1
+
+        if self.isControlled then
+            scale = 2
+        end
+
+        self.health = self.health + dt * (maxHealth / 100) * scale
+    end
 end
 
 return Entity
